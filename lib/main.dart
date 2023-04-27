@@ -150,7 +150,23 @@ class _AuthScreenState extends State<AuthScreen> {
                             strokeWidth: 2,
                           ),
                         )
-                      : Text(_isLogin ? 'Login' : 'Register'),
+                      : const Text('Login'),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                  ),
+                  onPressed: () => handleSubmit(),
+                  child: _loading
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Text('Register'),
                 ),
               ],
             ),
