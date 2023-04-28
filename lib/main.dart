@@ -1,10 +1,12 @@
+import 'package:dictionary_api/cubit/cubit/auth_cubit.dart';
 import 'package:dictionary_api/firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'auth.dart';
+import './cubit/auth_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,22 +22,25 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Firebase Auth',
-      theme: ThemeData(
-        textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
-        primarySwatch: Colors.blue,
-      ),
-      home: StreamBuilder<User?>(
-        stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return HomeScreen();
-          } else {
-            return const AuthScreen();
-          }
-        },
+    return BlocProvider(
+      create: (context) => AuthCubit(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Firebase Auth',
+        theme: ThemeData(
+          textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
+          primarySwatch: Colors.blue,
+        ),
+        home: StreamBuilder<User?>(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return HomeScreen();
+            } else {
+              return const AuthScreen();
+            }
+          },
+        ),
       ),
     );
   }
@@ -63,11 +68,11 @@ class _AuthScreenState extends State<AuthScreen> {
     setState(() => _loading = true);
 
     //Check if is login or register
-    if (_isLogin) {
-      await Auth().signInWithEmailAndPassword(email, password);
-    } else {
-      await Auth().registerWithEmailAndPassword(email, password);
-    }
+    // if (_isLogin) {
+    await Auth().signInWithEmailAndPassword(email, password, context);
+    // } else {
+    //   await Auth().registerWithEmailAndPassword(email, password);
+    // }
 
     setState(() => _loading = false);
   }
@@ -156,7 +161,8 @@ class _AuthScreenState extends State<AuthScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black,
                   ),
-                  onPressed: () => handleSubmit(),
+                  // onPressed: () => Auth().googleSignIn(context),
+                  onPressed: () => Auth().googleSignIn(context),
                   child: _loading
                       ? const SizedBox(
                           width: 20,
@@ -166,7 +172,7 @@ class _AuthScreenState extends State<AuthScreen> {
                             strokeWidth: 2,
                           ),
                         )
-                      : const Text('Register'),
+                      : const Text('Google Signin'),
                 ),
               ],
             ),
@@ -190,8 +196,7 @@ class HomeScreen extends StatelessWidget {
         child: Center(
           child: ElevatedButton(
             onPressed: () {
-              //Use this to Log Out user
-              FirebaseAuth.instance.signOut();
+              Auth().logOut(context);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.black,
