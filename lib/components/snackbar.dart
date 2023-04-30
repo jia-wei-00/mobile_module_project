@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-void snackBar(text, bg_color, txt_color, context) {
+void snackBar(
+    String text, Color bgColor, Color txtColor, BuildContext context) {
   var snackBar = SnackBar(
     content: Text(
       text,
       style: GoogleFonts.poppins(
-          textStyle: TextStyle(color: txt_color), fontWeight: FontWeight.w500),
+          textStyle: TextStyle(color: txtColor), fontWeight: FontWeight.w500),
     ),
-    backgroundColor: bg_color,
+    backgroundColor: bgColor,
     behavior: SnackBarBehavior.floating,
   );
 
