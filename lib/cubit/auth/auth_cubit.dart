@@ -18,7 +18,7 @@ class AuthCubit extends Cubit<AuthState> {
     final User? user = _auth.currentUser;
 
     if (user != null) {
-      emit(state.copyWith(user: user, loading: false));
+      emit(state.copyWith(user: user));
     }
   }
 
