@@ -1,120 +1,89 @@
-import 'package:dictionary_api/cubit/firestore/firestore_cubit.dart';
+import 'package:dictionary_api/cubit/auth/auth_cubit.dart';
+import 'package:dictionary_api/cubit/auth/auth_state.dart';
+import 'package:dictionary_api/pages/favorite_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:dictionary_api/components/navigation_bar.dart' as BottomBar;
+import 'package:go_router/go_router.dart';
 
-import '../components/snackbar.dart';
-import '../cubit/auth/auth_cubit.dart';
-import '../cubit/firestore/firestore_cubit.dart';
+import '../components/font.dart';
+import 'login_page.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  var _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => FirestoreCubit(context.read<AuthCubit>().state),
-      child: BlocBuilder<FirestoreCubit, FirestoreState>(
+      create: (context) => AuthCubit(),
+      child: BlocBuilder<AuthCubit, AuthState>(
         builder: (context, state) {
           return Scaffold(
             appBar: AppBar(
-              title: const Center(
-                child: Text('Favorite'),
+              title: Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Home'),
+                    state.user != null
+                        ? IconButton(
+                            icon: const Icon(Icons.logout),
+                            onPressed: () {
+                              context.read<AuthCubit>().logOut(context);
+                            },
+                          )
+                        : IconButton(
+                            icon: const Icon(Icons.login),
+                            onPressed: () => context.go('/profile'),
+                          )
+                  ],
+                ),
               ),
+              automaticallyImplyLeading: false,
               backgroundColor: Colors.black,
             ),
-            body: const FavoriteCard(),
-            floatingActionButton: FloatingActionButton(
-              onPressed: () {
-                context
-                    .read<FirestoreCubit>()
-                    .addFavorite("hello", "greeting to someone", context);
-              },
-              backgroundColor: Colors.black,
-              child: const Icon(Icons.add),
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
-
-class FavoriteCard extends StatefulWidget {
-  const FavoriteCard({Key? key}) : super(key: key);
-
-  @override
-  State<FavoriteCard> createState() => _FavoriteCardState();
-}
-
-class _FavoriteCardState extends State<FavoriteCard> {
-  @override
-  void initState() {
-    super.initState();
-    context.read<FirestoreCubit>().fetchData();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocListener<FirestoreCubit, FirestoreState>(
-      listener: (context, state) {
-        if (state is FirestoreError) {
-          snackBar(
-            state.errorMessage, // use the error message from state
-            Colors.red,
-            Colors.white,
-            context,
-          );
-        }
-
-        if (state is FirestoreSuccess) {
-          snackBar(
-            state.successMessage, // use the error message from state
-            Colors.green,
-            Colors.white,
-            context,
-          );
-        }
-      },
-      child: BlocBuilder<FirestoreCubit, FirestoreState>(
-        builder: (context, state) {
-          if (state is FirestoreLoading) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is FirestoreError) {
-            return Center(
-              child: Text(
-                state.errorMessage,
-                style: const TextStyle(color: Colors.red),
-              ),
-            );
-          } else if (state is FirestoreFetchSuccess) {
-            return ListView.builder(
-              itemCount: state.favoriteWords.words.length,
-              itemBuilder: (context, index) {
-                final favorite = state.favoriteWords.words[index];
-                final word = favorite['word'];
-                final desc = favorite['description'];
-                final createdAt = favorite['createdAt'];
-
-                return Card(
-                  child: ListTile(
-                      leading: const Icon(Icons.album),
-                      title: Text(word),
-                      subtitle: Text(desc),
-                      trailing: IconButton(
-                        icon: const Icon(
-                          Icons.delete_forever_rounded,
-                          color: Colors.red,
-                        ),
-                        onPressed: () => context
-                            .read<FirestoreCubit>()
-                            .removeFavorite(word, desc, createdAt),
-                      )),
+            body: BlocBuilder<AuthCubit, AuthState>(
+              builder: (context, state) {
+                return Column(
+                  children: [
+                    Center(
+                      child: Text(
+                          state.user == null ? "Please login" : "Logged in"),
+                    ),
+                  ],
                 );
               },
-            );
-          } else {
-            return const SizedBox.shrink();
-          }
+            ),
+            bottomNavigationBar: BottomBar.NavigationBar(
+              currentIndex: _currentIndex,
+              onTap: (int index) {
+                if (index == 0) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const HomePage()),
+                  );
+                } else if (index == 1) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const FavoritePage()),
+                  );
+                } else if (index == 2) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                  );
+                }
+              },
+            ),
+          );
         },
       ),
     );
