@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:bloc/bloc.dart';
-import 'dictionary_api.dart';
+import 'package:equatable/equatable.dart';
+
+part 'api_state.dart';
 
 class DictionaryCubit extends Cubit<DictionaryState> {
   DictionaryCubit() : super(StateInitial());
@@ -45,42 +47,4 @@ class DictionaryCubit extends Cubit<DictionaryState> {
       emit(StateError(e.toString()));
     }
   }
-}
-
-abstract class DictionaryState {}
-
-class StateInitial extends DictionaryState {}
-
-class StateLoading extends DictionaryState {}
-
-class StateLoaded extends DictionaryState {
-  final List<Definition> definitions;
-
-  StateLoaded(this.definitions);
-}
-
-class StateError extends DictionaryState {
-  final String message;
-
-  StateError(this.message);
-}
-
-class Definition {
-  final String word;
-  final String type;
-  final String definition;
-  final String example;
-  final String imageUrl;
-  final List<String> synonyms;
-  final List<String> antonyms;
-
-  Definition({
-    required this.word,
-    required this.type,
-    required this.definition,
-    required this.example,
-    required this.imageUrl,
-    required this.synonyms,
-    required this.antonyms,
-  });
 }
