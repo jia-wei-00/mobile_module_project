@@ -11,6 +11,13 @@ void snackBar(
     ),
     backgroundColor: bgColor,
     behavior: SnackBarBehavior.floating,
+    action: SnackBarAction(
+      label: 'Dismiss',
+      textColor: Colors.white,
+      onPressed: () {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      },
+    ),
   );
 
   // Find the ScaffoldMessenger in the widget tree

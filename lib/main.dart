@@ -4,8 +4,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import './bloc/dictionary_bloc.dart' as dict;
-import 'dictionary_api.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dictionary_api/components/navigation_bar.dart' as BottomBar;
@@ -118,11 +116,11 @@ class _NavigationPageState extends State<NavigationPage> {
                   unselectedColor: Colors.white),
 
               /// Profile
-              SalomonBottomBarItem(
-                  icon: const Icon(Icons.person),
-                  title: const Text("Profile"),
-                  selectedColor: Colors.white,
-                  unselectedColor: Colors.white),
+              // SalomonBottomBarItem(
+              //     icon: const Icon(Icons.person),
+              //     title: const Text("Profile"),
+              //     selectedColor: Colors.white,
+              //     unselectedColor: Colors.white),
             ],
           ),
         );

@@ -8,10 +8,10 @@ part 'api_state.dart';
 class DictionaryCubit extends Cubit<DictionaryState> {
   DictionaryCubit() : super(StateInitial());
 
-  final String _baseUrl =
-      "https://api.dictionaryapi.dev/api/v2/entries/en/sing";
-
   void search(String text) async {
+    final String _baseUrl =
+        "https://api.dictionaryapi.dev/api/v2/entries/en/$text";
+
     if (text.isEmpty) {
       emit(StateInitial());
       return;
