@@ -1,21 +1,20 @@
-import 'package:equatable/equatable.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+part of 'auth_cubit.dart';
 
-class AuthState extends Equatable {
-  final User? user;
-  final bool loading;
-
-  const AuthState({this.user, this.loading = false});
-
-  AuthState copyWith({User? user, bool? loading}) {
-    return AuthState(
-      user: user ?? this.user,
-      loading: loading ?? this.loading,
-    );
-  }
+abstract class AuthState extends Equatable {
+  const AuthState();
 
   @override
-  List<Object?> get props => [user, loading];
+  List<Object> get props => [];
 }
 
-// class AuthFailed extends AuthState {}
+class AuthInitial extends AuthState {}
+
+class AuthSuccess extends AuthState {
+  final User? user;
+
+  const AuthSuccess(this.user);
+}
+
+class AuthFailed extends AuthState {}
+
+class AuthLoading extends AuthState {}

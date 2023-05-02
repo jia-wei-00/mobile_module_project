@@ -16,7 +16,7 @@ class _FavoritePageState extends State<FavoritePage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => FirestoreCubit(context.read<AuthCubit>().state),
+      create: (context) => FirestoreCubit(),
       child: BlocBuilder<FirestoreCubit, FirestoreState>(
         builder: (context, state) {
           return Scaffold(

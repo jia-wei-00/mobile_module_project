@@ -1,6 +1,5 @@
 import 'package:dictionary_api/cubit/api/api_cubit.dart';
 import 'package:dictionary_api/cubit/auth/auth_cubit.dart';
-import 'package:dictionary_api/cubit/auth/auth_state.dart';
 import 'package:dictionary_api/pages/favorite_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
