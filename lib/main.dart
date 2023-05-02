@@ -58,8 +58,8 @@ class DictionaryScreenState extends State<DictionaryScreen> {
               hintText: 'Enter a word',
               suffixIcon: IconButton(
                 onPressed: () {
-                  String word = _searchController.text;
-                  _cubit.search(word);
+                  String $word = _searchController.text;
+                  _cubit.search($word);
                   FocusScope.of(context).unfocus();
                 },
                 icon: const Icon(Icons.search),
