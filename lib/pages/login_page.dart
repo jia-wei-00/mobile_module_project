@@ -23,12 +23,6 @@ class _LoginPageState extends State<LoginPage> {
     final passwordController = TextEditingController();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Center(
-          child: Text('Login'),
-        ),
-        backgroundColor: Colors.black,
-      ),
       body: BlocBuilder<AuthCubit, AuthState>(
         builder: (context, state) {
           return Padding(

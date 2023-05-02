@@ -16,13 +16,6 @@ class FavoritePage extends StatelessWidget {
       child: BlocBuilder<FirestoreCubit, FirestoreState>(
         builder: (context, state) {
           return Scaffold(
-            appBar: AppBar(
-              title: const Center(
-                child: Text('Favorite'),
-              ),
-              automaticallyImplyLeading: false,
-              backgroundColor: Colors.black,
-            ),
             body: const FavoriteCard(),
             floatingActionButton: FloatingActionButton(
               onPressed: () {

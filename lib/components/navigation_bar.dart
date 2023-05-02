@@ -23,22 +23,22 @@ class _NavigationBarState extends State<NavigationBar> {
       items: [
         /// Home
         SalomonBottomBarItem(
-            icon: Icon(Icons.home),
-            title: Text("Home"),
+            icon: const Icon(Icons.home),
+            title: const Text("Home"),
             selectedColor: Colors.white,
             unselectedColor: Colors.white),
 
         /// Likes
         SalomonBottomBarItem(
-            icon: Icon(Icons.favorite_border),
-            title: Text("Likes"),
+            icon: const Icon(Icons.favorite_border),
+            title: const Text("Likes"),
             selectedColor: Colors.white,
             unselectedColor: Colors.white),
 
         /// Profile
         SalomonBottomBarItem(
-            icon: Icon(Icons.person),
-            title: Text("Profile"),
+            icon: const Icon(Icons.person),
+            title: const Text("Profile"),
             selectedColor: Colors.white,
             unselectedColor: Colors.white),
       ],

@@ -18,4 +18,4 @@ class AuthState extends Equatable {
   List<Object?> get props => [user, loading];
 }
 
-class AuthFailed extends AuthState {}
+// class AuthFailed extends AuthState {}

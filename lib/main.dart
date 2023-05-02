@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dictionary_api/components/navigation_bar.dart' as BottomBar;
-import 'package:go_router/go_router.dart';
+import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
 import './cubit/auth/auth_cubit.dart';
 import './cubit/auth/auth_state.dart';
@@ -20,32 +20,6 @@ void main() async {
   runApp(const MyApp());
 }
 
-/// The route configuration.
-final GoRouter _router = GoRouter(
-  routes: <RouteBase>[
-    GoRoute(
-      path: '/',
-      builder: (BuildContext context, GoRouterState state) {
-        return const HomePage();
-      },
-      routes: <RouteBase>[
-        GoRoute(
-          path: 'favorite',
-          builder: (BuildContext context, GoRouterState state) {
-            return const FavoritePage();
-          },
-        ),
-        GoRoute(
-          path: 'profile',
-          builder: (BuildContext context, GoRouterState state) {
-            return const LoginPage();
-          },
-        ),
-      ],
-    ),
-  ],
-);
-
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
@@ -53,52 +27,104 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => AuthCubit(),
-      child: MaterialApp.router(
+      child: MaterialApp(
         title: 'Flutter Demo',
         theme: _buildTheme(Brightness.light),
-        routerConfig: _router,
+        home: const NavigationPage(),
       ),
     );
   }
 }
 
-// class InitialPage extends StatefulWidget {
-//   const InitialPage({super.key});
+class NavigationPage extends StatefulWidget {
+  const NavigationPage({Key? key}) : super(key: key);
 
-//   @override
-//   State<InitialPage> createState() => _InitialPageState();
-// }
+  @override
+  _NavigationPageState createState() => _NavigationPageState();
+}
 
-// class _InitialPageState extends State<InitialPage> {
-//   var _currentIndex = 0;
+class _NavigationPageState extends State<NavigationPage> {
+  int _currentIndex = 0;
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return const Scaffold(
-//       bottomNavigationBar: BottomBar.NavigationBar(
-//         currentIndex: _currentIndex,
-//         onTap: (int index) {
-//           if (index == 0) {
-//             Navigator.push(
-//               context,
-//               MaterialPageRoute(builder: (context) => const HomePage()),
-//             );
-//           } else if (index == 1) {
-//             Navigator.push(
-//               context,
-//               MaterialPageRoute(builder: (context) => const FavoritePage()),
-//             );
-//           } else if (index == 2) {
-//             Navigator.push(
-//               context,
-//               MaterialPageRoute(builder: (context) => const LoginPage()),
-//             );
-//           }
-//         },
-//       ),
-//     );
-//   }
-// }
+  final List<Widget> _pages = <Widget>[
+    const HomePage(),
+    const FavoritePage(),
+    const LoginPage(),
+  ];
+
+  final List<String> _titles = <String>[
+    'Home',
+    'Favorite',
+    'Profile',
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<AuthCubit, AuthState>(
+      builder: (context, state) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(_titles[_currentIndex]),
+                  state.user != null
+                      ? IconButton(
+                          icon: const Icon(Icons.logout),
+                          onPressed: () {
+                            context.read<AuthCubit>().logOut(context);
+                          },
+                        )
+                      : IconButton(
+                          icon: const Icon(Icons.login),
+                          onPressed: () => setState(() {
+                            _currentIndex = 2;
+                          }),
+                        )
+                ],
+              ),
+            ),
+            automaticallyImplyLeading: false,
+            backgroundColor: Colors.black,
+          ),
+          body: _pages[_currentIndex],
+          bottomNavigationBar: SalomonBottomBar(
+            currentIndex: _currentIndex,
+            onTap: (int index) {
+              setState(() {
+                _currentIndex = index;
+              });
+            },
+            backgroundColor: Colors.black,
+            items: [
+              /// Home
+              SalomonBottomBarItem(
+                  icon: const Icon(Icons.home),
+                  title: const Text("Home"),
+                  selectedColor: Colors.white,
+                  unselectedColor: Colors.white),
+
+              /// Likes
+              SalomonBottomBarItem(
+                  icon: const Icon(Icons.favorite_border),
+                  title: const Text("Likes"),
+                  selectedColor: Colors.white,
+                  unselectedColor: Colors.white),
+
+              /// Profile
+              SalomonBottomBarItem(
+                  icon: const Icon(Icons.person),
+                  title: const Text("Profile"),
+                  selectedColor: Colors.white,
+                  unselectedColor: Colors.white),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
 
 ThemeData _buildTheme(brightness) {
   var baseTheme = ThemeData(brightness: brightness);
