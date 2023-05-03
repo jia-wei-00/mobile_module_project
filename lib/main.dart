@@ -69,47 +69,43 @@ class _NavigationPageState extends State<NavigationPage> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => AuthCubit(),
-      child: BlocBuilder<AuthCubit, AuthState>(
+      child: BlocConsumer<AuthCubit, AuthState>(
+        listener: (context, state) {
+          if (state is AuthInitial) {
+            setState(() {
+              _currentIndex = 0;
+            });
+          }
+
+          if (state is AuthSuccess) {
+            setState(() {
+              _currentIndex = 0;
+              print("hello");
+            });
+          }
+        },
         builder: (context, state) {
           return Scaffold(
             appBar: AppBar(
               title: Center(
-                child: BlocBuilder<AuthCubit, AuthState>(
-                  builder: (context, state) {
-                    User? user;
-                    context.read<AuthCubit>().checkSignin;
-
-                    return BlocListener<AuthCubit, AuthState>(
-                      listener: (context, state) {
-                        if (state is AuthSuccess) {
-                          setState(() {
-                            user = state.user;
-                          });
-
-                          print(user);
-                        }
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(_titles[_currentIndex]),
-                          user != null
-                              ? IconButton(
-                                  icon: const Icon(Icons.logout),
-                                  onPressed: () {
-                                    context.read<AuthCubit>().logOut(context);
-                                  },
-                                )
-                              : IconButton(
-                                  icon: const Icon(Icons.login),
-                                  onPressed: () => setState(() {
-                                    _currentIndex = 2;
-                                  }),
-                                )
-                        ],
-                      ),
-                    );
-                  },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(_titles[_currentIndex]),
+                    state is AuthSuccess
+                        ? IconButton(
+                            icon: const Icon(Icons.logout),
+                            onPressed: () {
+                              context.read<AuthCubit>().logOut(context);
+                            },
+                          )
+                        : IconButton(
+                            icon: const Icon(Icons.login),
+                            onPressed: () => setState(() {
+                              _currentIndex = 2;
+                            }),
+                          )
+                  ],
                 ),
               ),
               automaticallyImplyLeading: false,

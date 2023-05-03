@@ -73,46 +73,56 @@ class _FavoriteCardState extends State<FavoriteCard> {
           );
         }
       },
-      child: BlocBuilder<FirestoreCubit, FirestoreState>(
+      child: BlocBuilder<AuthCubit, AuthState>(
         builder: (context, state) {
-          if (state is FirestoreLoading) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is FirestoreError) {
-            return Center(
-              child: Text(
-                state.errorMessage,
-                style: const TextStyle(color: Colors.red),
-              ),
-            );
-          } else if (state is FirestoreFetchSuccess) {
-            return ListView.builder(
-              itemCount: state.favoriteWords.words.length,
-              itemBuilder: (context, index) {
-                final favorite = state.favoriteWords.words[index];
-                final word = favorite['word'];
-                final desc = favorite['description'];
-                final createdAt = favorite['createdAt'];
-
-                return Card(
-                  child: ListTile(
-                      leading: const Icon(Icons.album),
-                      title: Text(word),
-                      subtitle: Text(desc),
-                      trailing: IconButton(
-                        icon: const Icon(
-                          Icons.delete_forever_rounded,
-                          color: Colors.red,
+          return state is AuthSuccess
+              ? BlocBuilder<FirestoreCubit, FirestoreState>(
+                  builder: (context, state) {
+                    if (state is FirestoreLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (state is FirestoreError) {
+                      return Center(
+                        child: Text(
+                          state.errorMessage,
+                          style: const TextStyle(color: Colors.red),
                         ),
-                        onPressed: () => context
-                            .read<FirestoreCubit>()
-                            .removeFavorite(word, desc, createdAt),
-                      )),
-                );
-              },
-            );
-          } else {
-            return const SizedBox.shrink();
-          }
+                      );
+                    } else if (state is FirestoreFetchSuccess) {
+                      return ListView.builder(
+                        itemCount: state.favoriteWords.words.length,
+                        itemBuilder: (context, index) {
+                          final favorite = state.favoriteWords.words[index];
+                          final word = favorite['word'];
+                          final desc = favorite['description'];
+                          final createdAt = favorite['createdAt'];
+
+                          return Card(
+                            child: ListTile(
+                                leading: const Icon(Icons.album),
+                                title: Text(word),
+                                subtitle: Text(desc),
+                                trailing: IconButton(
+                                  icon: const Icon(
+                                    Icons.delete_forever_rounded,
+                                    color: Colors.red,
+                                  ),
+                                  onPressed: () => context
+                                      .read<FirestoreCubit>()
+                                      .removeFavorite(word, desc, createdAt),
+                                )),
+                          );
+                        },
+                      );
+                    } else {
+                      return const SizedBox.shrink();
+                    }
+                  },
+                )
+              : const Center(
+                  child: Text(
+                  "Please login to use favorite feature!",
+                  style: TextStyle(color: Colors.red),
+                ));
         },
       ),
     );
