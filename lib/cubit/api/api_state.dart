@@ -28,7 +28,9 @@ class Definition {
   final String type;
   final String definition;
   final String example;
-  final String imageUrl;
+  final String audio;
+  final String pronunciation;
+  // final String imageUrl;
   final List<String> synonyms;
   final List<String> antonyms;
 
@@ -37,7 +39,9 @@ class Definition {
     required this.type,
     required this.definition,
     required this.example,
-    required this.imageUrl,
+    required this.audio,
+    required this.pronunciation,
+    // required this.imageUrl,
     required this.synonyms,
     required this.antonyms,
   });

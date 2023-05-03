@@ -93,9 +93,22 @@ class _HomePageState extends State<HomePage> {
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
+                                        Text(
+                                          state.definitions[index].type,
+                                          style: const TextStyle(
+                                            fontSize: 15.0,
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                        ),
                                         const SizedBox(height: 8.0),
                                         Text(
                                           state.definitions[index].definition,
+                                          style:
+                                              const TextStyle(fontSize: 16.0),
+                                        ),
+                                        Text(
+                                          state
+                                              .definitions[index].pronunciation,
                                           style:
                                               const TextStyle(fontSize: 16.0),
                                         ),
@@ -124,12 +137,6 @@ class _HomePageState extends State<HomePage> {
                                             'Antonyms: ${state.definitions[index].antonyms.join(", ")}',
                                             style:
                                                 const TextStyle(fontSize: 16.0),
-                                          ),
-                                        if (state.definitions[index].imageUrl
-                                            .isNotEmpty)
-                                          Image.network(
-                                            state.definitions[index].imageUrl,
-                                            height: 200.0,
                                           ),
                                       ],
                                     ),
