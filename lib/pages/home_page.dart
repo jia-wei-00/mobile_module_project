@@ -50,11 +50,6 @@ class _HomePageState extends State<HomePage> {
                             },
                             icon: const Icon(Icons.search),
                             color: Colors.black,
-
-                            // const Icon(
-                            //   Icons.search,
-                            //   color: Colors.blue,
-                            // ),
                           ),
                         ),
                         textInputAction: TextInputAction.search,
@@ -86,11 +81,33 @@ class _HomePageState extends State<HomePage> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
+                                        Align(
+                                          alignment: Alignment.topRight,
+                                          child: IconButton(
+                                              onPressed: () {},
+                                              icon: const Icon(Icons
+                                                  .favorite_border_outlined)),
+                                        ),
+                                        Align(
+                                          alignment: Alignment.bottomRight,
+                                          child: IconButton(
+                                              onPressed: () {},
+                                              icon:
+                                                  const Icon(Icons.volume_up)),
+                                        ),
                                         Text(
                                           state.definitions[index].word,
                                           style: const TextStyle(
                                             fontSize: 20.0,
                                             fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8.0),
+                                        Text(
+                                          state.definitions[index].type,
+                                          style: const TextStyle(
+                                            fontSize: 15.0,
+                                            fontWeight: FontWeight.normal,
                                           ),
                                         ),
                                         const SizedBox(height: 8.0),
@@ -125,12 +142,17 @@ class _HomePageState extends State<HomePage> {
                                             style:
                                                 const TextStyle(fontSize: 16.0),
                                           ),
-                                        if (state.definitions[index].imageUrl
-                                            .isNotEmpty)
-                                          Image.network(
-                                            state.definitions[index].imageUrl,
-                                            height: 200.0,
-                                          ),
+                                        // if (state.definitions[index].imageUrl
+                                        //     .isNotEmpty)
+                                        //   Image.network(
+                                        //     state.definitions[index].imageUrl,
+                                        //     height: 200.0,
+                                        //   ),
+
+                                        if (state.definitions[index]
+                                            .pronunciation.isNotEmpty)
+                                          Text(state
+                                              .definitions[index].pronunciation)
                                       ],
                                     ),
                                   ),
