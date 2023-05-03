@@ -80,7 +80,6 @@ class _NavigationPageState extends State<NavigationPage> {
           if (state is AuthSuccess) {
             setState(() {
               _currentIndex = 0;
-              print("hello");
             });
           }
         },
