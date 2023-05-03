@@ -101,6 +101,8 @@ class AuthCubit extends Cubit<AuthState> {
       snackBar("Successfully logout", Colors.green, Colors.white, context);
     } catch (error) {
       emit(AuthFailed());
+
+      print('error is: $error');
       snackBar(error.toString(), Colors.red, Colors.white, context);
     }
   }

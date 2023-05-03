@@ -15,10 +15,8 @@ class FirestoreCubit extends Cubit<FirestoreState> {
 
   final db = FirebaseFirestore.instance;
 
-  Future<void> addFavorite(word, desc, context) async {
+  Future<void> addFavorite(word, desc, context, user) async {
     try {
-      final user = (state as AuthSuccess).user;
-
       if (user == null) {
         emit(const FirestoreError("User not logged in"));
         return;
@@ -48,18 +46,17 @@ class FirestoreCubit extends Cubit<FirestoreState> {
       // Emit a new state to indicate that the favorite word has been successfully added
       emit(const FirestoreSuccess("Favorite added successfully!"));
 
-      fetchData();
+      fetchData(user);
     } catch (error) {
       emit(FirestoreError(error.toString()));
       // snackBar(error.toString(), Colors.red, Colors.white, context);
     }
   }
 
-  Future<void> fetchData() async {
+  Future<void> fetchData(user) async {
     emit(FirestoreLoading());
 
     try {
-      final user = (state as AuthSuccess).user;
       if (user == null) {
         emit(const FirestoreError("User not logged in"));
         return;
@@ -82,11 +79,10 @@ class FirestoreCubit extends Cubit<FirestoreState> {
     }
   }
 
-  Future<void> removeFavorite(word, desc, createdAt) async {
+  Future<void> removeFavorite(word, desc, createdAt, user) async {
     emit(FirestoreLoading());
 
     try {
-      final user = (state as AuthSuccess).user;
       if (user == null) {
         emit(const FirestoreError("User not logged in"));
         return;
@@ -106,7 +102,7 @@ class FirestoreCubit extends Cubit<FirestoreState> {
 
       emit(const FirestoreSuccess("Successfully deleted"));
 
-      fetchData();
+      fetchData(user);
     } catch (error) {
       emit(FirestoreError(error.toString()));
     }

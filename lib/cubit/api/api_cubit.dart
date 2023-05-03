@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -46,5 +47,9 @@ class DictionaryCubit extends Cubit<DictionaryState> {
     } catch (e) {
       emit(StateError(e.toString()));
     }
+  }
+
+  void setInitial() {
+    emit(StateInitial());
   }
 }
