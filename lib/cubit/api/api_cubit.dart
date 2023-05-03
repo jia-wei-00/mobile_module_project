@@ -11,6 +11,7 @@ class DictionaryCubit extends Cubit<DictionaryState> {
   void search(String text) async {
     final String _baseUrl =
         "https://api.dictionaryapi.dev/api/v2/entries/en/$text";
+
     if (text.isEmpty) {
       emit(StateInitial());
       return;

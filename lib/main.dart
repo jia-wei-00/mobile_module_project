@@ -8,9 +8,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dictionary_api/components/navigation_bar.dart' as BottomBar;
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import './cubit/auth/auth_cubit.dart';
-import './cubit/auth/auth_state.dart';
 import './pages/favorite_page.dart';
 import './pages/login_page.dart';
 import 'firebase_options.dart';
@@ -28,13 +28,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => AuthCubit(),
-      child: MaterialApp(
-        title: 'Flutter Demo',
-        theme: _buildTheme(Brightness.light),
-        home: const NavigationPage(),
-      ),
+    return MaterialApp(
+      title: 'Flutter Demo',
+      theme: _buildTheme(Brightness.light),
+      home: const NavigationPage(),
     );
   }
 }
@@ -47,6 +44,13 @@ class NavigationPage extends StatefulWidget {
 }
 
 class _NavigationPageState extends State<NavigationPage> {
+  @override
+  void initState() {
+    super.initState();
+    // run your function here
+    AuthCubit().checkSignin();
+  }
+
   int _currentIndex = 0;
 
   final List<Widget> _pages = <Widget>[
@@ -63,68 +67,89 @@ class _NavigationPageState extends State<NavigationPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthCubit, AuthState>(
-      builder: (context, state) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(_titles[_currentIndex]),
-                  state.user != null
-                      ? IconButton(
-                          icon: const Icon(Icons.logout),
-                          onPressed: () {
-                            context.read<AuthCubit>().logOut(context);
-                          },
-                        )
-                      : IconButton(
-                          icon: const Icon(Icons.login),
-                          onPressed: () => setState(() {
-                            _currentIndex = 2;
-                          }),
-                        )
-                ],
+    return BlocProvider(
+      create: (context) => AuthCubit(),
+      child: BlocBuilder<AuthCubit, AuthState>(
+        builder: (context, state) {
+          return Scaffold(
+            appBar: AppBar(
+              title: Center(
+                child: BlocBuilder<AuthCubit, AuthState>(
+                  builder: (context, state) {
+                    User? user;
+                    context.read<AuthCubit>().checkSignin;
+
+                    return BlocListener<AuthCubit, AuthState>(
+                      listener: (context, state) {
+                        if (state is AuthSuccess) {
+                          setState(() {
+                            user = state.user;
+                          });
+
+                          print(user);
+                        }
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(_titles[_currentIndex]),
+                          user != null
+                              ? IconButton(
+                                  icon: const Icon(Icons.logout),
+                                  onPressed: () {
+                                    context.read<AuthCubit>().logOut(context);
+                                  },
+                                )
+                              : IconButton(
+                                  icon: const Icon(Icons.login),
+                                  onPressed: () => setState(() {
+                                    _currentIndex = 2;
+                                  }),
+                                )
+                        ],
+                      ),
+                    );
+                  },
+                ),
               ),
+              automaticallyImplyLeading: false,
+              backgroundColor: Colors.black,
             ),
-            automaticallyImplyLeading: false,
-            backgroundColor: Colors.black,
-          ),
-          body: _pages[_currentIndex],
-          bottomNavigationBar: SalomonBottomBar(
-            currentIndex: _currentIndex,
-            onTap: (int index) {
-              setState(() {
-                _currentIndex = index;
-              });
-            },
-            backgroundColor: Colors.black,
-            items: [
-              /// Home
-              SalomonBottomBarItem(
-                  icon: const Icon(Icons.home),
-                  title: const Text("Home"),
-                  selectedColor: Colors.white,
-                  unselectedColor: Colors.white),
+            body: _pages[_currentIndex],
+            bottomNavigationBar: SalomonBottomBar(
+              currentIndex: _currentIndex,
+              onTap: (int index) {
+                setState(() {
+                  _currentIndex = index;
+                });
+              },
+              backgroundColor: Colors.black,
+              items: [
+                /// Home
+                SalomonBottomBarItem(
+                    icon: const Icon(Icons.home),
+                    title: const Text("Home"),
+                    selectedColor: Colors.white,
+                    unselectedColor: Colors.white),
 
-              /// Likes
-              SalomonBottomBarItem(
-                  icon: const Icon(Icons.favorite_border),
-                  title: const Text("Likes"),
-                  selectedColor: Colors.white,
-                  unselectedColor: Colors.white),
+                /// Likes
+                SalomonBottomBarItem(
+                    icon: const Icon(Icons.favorite_border),
+                    title: const Text("Likes"),
+                    selectedColor: Colors.white,
+                    unselectedColor: Colors.white),
 
-              /// Profile
-              SalomonBottomBarItem(
-                  icon: const Icon(Icons.person),
-                  title: const Text("Profile"),
-                  selectedColor: Colors.white,
-                  unselectedColor: Colors.white),
-            ],
-          ),
-        );
-      },
+                /// Profile
+                // SalomonBottomBarItem(
+                //     icon: const Icon(Icons.person),
+                //     title: const Text("Profile"),
+                //     selectedColor: Colors.white,
+                //     unselectedColor: Colors.white),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }

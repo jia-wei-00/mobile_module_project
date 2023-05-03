@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 
 import '../cubit/auth/auth_cubit.dart';
-import '../cubit/auth/auth_state.dart';
 import '../components/font.dart';
 
 class LoginPage extends StatefulWidget {
@@ -50,7 +49,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                state.loading == true
+                state is AuthLoading
                     ? const Padding(
                         padding: EdgeInsets.all(10.0),
                         child: CircularProgressIndicator(),
