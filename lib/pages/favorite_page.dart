@@ -21,15 +21,19 @@ class _FavoritePageState extends State<FavoritePage> {
         builder: (context, state) {
           return Scaffold(
             body: const FavoriteCard(),
-            floatingActionButton: FloatingActionButton(
-              onPressed: () {
-                context
-                    .read<FirestoreCubit>()
-                    .addFavorite("hello", "greeting to someone", context);
-              },
-              backgroundColor: Colors.black,
-              child: const Icon(Icons.add),
-            ),
+            floatingActionButton:
+                BlocBuilder<AuthCubit, AuthState>(builder: (context, state) {
+              return state is AuthSuccess
+                  ? FloatingActionButton(
+                      onPressed: () {
+                        context.read<FirestoreCubit>().addFavorite("hello",
+                            "greeting to someone", context, state.user);
+                      },
+                      backgroundColor: Colors.black,
+                      child: const Icon(Icons.add),
+                    )
+                  : const SizedBox.shrink();
+            }),
           );
         },
       ),
@@ -48,7 +52,13 @@ class _FavoriteCardState extends State<FavoriteCard> {
   @override
   void initState() {
     super.initState();
-    context.read<FirestoreCubit>().fetchData();
+    final authState = BlocProvider.of<AuthCubit>(context).state;
+
+    if (authState is AuthSuccess) {
+      final user = authState.user;
+
+      context.read<FirestoreCubit>().fetchData(user);
+    }
   }
 
   @override
@@ -97,19 +107,26 @@ class _FavoriteCardState extends State<FavoriteCard> {
                           final createdAt = favorite['createdAt'];
 
                           return Card(
-                            child: ListTile(
-                                leading: const Icon(Icons.album),
-                                title: Text(word),
-                                subtitle: Text(desc),
-                                trailing: IconButton(
-                                  icon: const Icon(
-                                    Icons.delete_forever_rounded,
-                                    color: Colors.red,
-                                  ),
-                                  onPressed: () => context
-                                      .read<FirestoreCubit>()
-                                      .removeFavorite(word, desc, createdAt),
-                                )),
+                            child: BlocBuilder<AuthCubit, AuthState>(
+                              builder: (context, state) {
+                                return state is AuthSuccess
+                                    ? ListTile(
+                                        leading: const Icon(Icons.album),
+                                        title: Text(word),
+                                        subtitle: Text(desc),
+                                        trailing: IconButton(
+                                          icon: const Icon(
+                                            Icons.delete_forever_rounded,
+                                            color: Colors.red,
+                                          ),
+                                          onPressed: () => context
+                                              .read<FirestoreCubit>()
+                                              .removeFavorite(word, desc,
+                                                  createdAt, state.user),
+                                        ))
+                                    : const SizedBox.shrink();
+                              },
+                            ),
                           );
                         },
                       );
