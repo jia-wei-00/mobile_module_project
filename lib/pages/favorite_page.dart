@@ -111,7 +111,7 @@ class _FavoriteCardState extends State<FavoriteCard> {
                               builder: (context, state) {
                                 return state is AuthSuccess
                                     ? ListTile(
-                                        leading: const Icon(Icons.album),
+                                        // leading: const Icon(Icons.album),
                                         title: Text(word),
                                         subtitle: Text(desc),
                                         trailing: IconButton(

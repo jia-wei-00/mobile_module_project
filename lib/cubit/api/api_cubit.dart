@@ -33,12 +33,20 @@ class DictionaryCubit extends Cubit<DictionaryState> {
           final definition = Definition(
             word: data['word'],
             type: meaning['partOfSpeech'] ?? '',
-            definition: meaning['definitions'][0]['definition'] ?? '',
-            example: meaning['definitions'][0]['example'] ?? '',
-            audio: data["phonetics"].length > 0
+            definition: meaning[definitions] != null &&
+                    i + 1 <= meaning[definitions].length
+                ? meaning['definitions'][0]['definition'] ?? ''
+                : "",
+            example: meaning[definitions] != null &&
+                    i + 1 <= meaning[definitions].length
+                ? meaning['definitions'][0]['example'] ?? ''
+                : "",
+            audio: data["phonetics"].length > 0 &&
+                    i + 1 <= data["phonetics"].length
                 ? data["phonetics"][i]["audio"] ?? ''
                 : "",
-            pronunciation: data["phonetics"].length > 0
+            pronunciation: data["phonetics"].length > 0 &&
+                    i + 1 <= data["phonetics"].length
                 ? data["phonetics"][i]["text"] ?? ''
                 : "",
             // pronunciation: data["phonetics"][0]["text"] ?? "",
