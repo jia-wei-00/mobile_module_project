@@ -111,6 +111,8 @@ class _HomePageState extends State<HomePage> {
                                             state.definitions[index].definition;
                                         var example =
                                             state.definitions[index].example;
+                                        var type =
+                                            state.definitions[index].type;
 
                                         return Card(
                                           child: Padding(
@@ -132,38 +134,54 @@ class _HomePageState extends State<HomePage> {
                                                             FontWeight.bold,
                                                       ),
                                                     ),
-                                                    user != null
-                                                        ? BlocBuilder<
-                                                            FirestoreCubit,
-                                                            FirestoreState>(
-                                                            builder: (context,
-                                                                state) {
-                                                              return authState
-                                                                      is AuthSuccess
-                                                                  ? IconButton(
-                                                                      icon: const Icon(
-                                                                          Icons
-                                                                              .favorite_outline),
-                                                                      color: Colors
-                                                                          .red,
-                                                                      onPressed:
-                                                                          () {
-                                                                        context.read<FirestoreCubit>().addFavorite(
-                                                                            word,
-                                                                            desc,
-                                                                            context,
-                                                                            user);
-                                                                      },
-                                                                    )
-                                                                  : const SizedBox
-                                                                      .shrink();
-                                                            },
-                                                          )
-                                                        : const SizedBox
-                                                            .shrink()
+                                                    Row(
+                                                      children: [
+                                                        IconButton(
+                                                            onPressed: () {},
+                                                            icon: const Icon(
+                                                                Icons
+                                                                    .volume_up)),
+                                                        user != null
+                                                            ? BlocBuilder<
+                                                                FirestoreCubit,
+                                                                FirestoreState>(
+                                                                builder:
+                                                                    (context,
+                                                                        state) {
+                                                                  return authState
+                                                                          is AuthSuccess
+                                                                      ? IconButton(
+                                                                          icon:
+                                                                              const Icon(Icons.favorite_outline),
+                                                                          color:
+                                                                              Colors.red,
+                                                                          onPressed:
+                                                                              () {
+                                                                            context.read<FirestoreCubit>().addFavorite(
+                                                                                word,
+                                                                                desc,
+                                                                                context,
+                                                                                user);
+                                                                          },
+                                                                        )
+                                                                      : const SizedBox
+                                                                          .shrink();
+                                                                },
+                                                              )
+                                                            : const SizedBox
+                                                                .shrink()
+                                                      ],
+                                                    )
                                                   ],
                                                 ),
                                                 const SizedBox(height: 8.0),
+                                                Text(
+                                                  type,
+                                                  style: const TextStyle(
+                                                      fontSize: 15.0,
+                                                      fontWeight:
+                                                          FontWeight.normal),
+                                                ),
                                                 Text(
                                                   desc,
                                                   style: const TextStyle(
