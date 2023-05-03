@@ -50,6 +50,12 @@ class _HomePageState extends State<HomePage> {
                               FocusScope.of(context).unfocus();
                             },
                             icon: const Icon(Icons.search),
+                            color: Colors.black,
+
+                            // const Icon(
+                            //   Icons.search,
+                            //   color: Colors.blue,
+                            // ),
                           ),
                         ),
                         textInputAction: TextInputAction.search,

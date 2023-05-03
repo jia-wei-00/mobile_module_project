@@ -30,10 +30,6 @@ class AuthCubit extends Cubit<AuthState> {
       final user = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       emit(state.copyWith(user: user.user, loading: false));
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
-      );
       snackBar(
           "Welcome ${user.user?.email}", Colors.green, Colors.white, context);
     } catch (error) {
@@ -48,10 +44,6 @@ class AuthCubit extends Cubit<AuthState> {
       final user = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
       emit(state.copyWith(user: user.user, loading: false));
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
-      );
       snackBar(
           "Welcome ${user.user?.email}", Colors.green, Colors.white, context);
     } on FirebaseAuthException catch (e) {

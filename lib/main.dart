@@ -1,33 +1,39 @@
 import 'package:dictionary_api/cubit/api/api_cubit.dart';
-import 'package:dictionary_api/cubit/auth/auth_cubit.dart';
-import 'package:dictionary_api/cubit/auth/auth_state.dart';
-import 'package:dictionary_api/pages/favorite_page.dart';
 import 'package:dictionary_api/pages/home_page.dart';
-import 'package:dictionary_api/pages/login_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:dictionary_api/components/navigation_bar.dart' as BottomBar;
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
-import './bloc/dictionary_bloc.dart' as dict;
-import 'dictionary_api.dart';
 
-void main() {
+import './cubit/auth/auth_cubit.dart';
+import './cubit/auth/auth_state.dart';
+import './pages/favorite_page.dart';
+import './pages/login_page.dart';
+import 'firebase_options.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Dictionary App',
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Dictionary App'),
-        ),
-        body: const NavigationPage(),
+    return BlocProvider(
+      create: (context) => AuthCubit(),
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: _buildTheme(Brightness.light),
+        home: const NavigationPage(),
       ),
     );
   }
@@ -121,4 +127,34 @@ class _NavigationPageState extends State<NavigationPage> {
       },
     );
   }
+}
+
+ThemeData _buildTheme(brightness) {
+  var baseTheme = ThemeData(brightness: brightness);
+
+  return baseTheme.copyWith(
+    textTheme: GoogleFonts.poppinsTextTheme(baseTheme.textTheme),
+    primaryColor: Colors.black,
+    textButtonTheme: TextButtonThemeData(
+      style: ButtonStyle(
+        foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
+      ),
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.black,
+      ),
+    ),
+    textSelectionTheme: const TextSelectionThemeData(
+      cursorColor: Colors.black,
+    ),
+    inputDecorationTheme: const InputDecorationTheme(
+      focusedBorder: UnderlineInputBorder(
+        borderSide: BorderSide(width: 2.0, color: Colors.black),
+      ),
+      labelStyle: TextStyle(
+        color: Colors.black,
+      ),
+    ),
+  );
 }
