@@ -87,8 +87,8 @@ class _NavigationPageState extends State<NavigationPage> {
             _currentIndex = 0;
           });
 
-          snackBar("Welcome ${state.user!.displayName.toString()}",
-              Colors.green, Colors.white, context);
+          snackBar("Welcome ${state.user!.email.toString()}", Colors.green,
+              Colors.white, context);
         }
 
         if (state is AuthFailed) {
@@ -96,7 +96,7 @@ class _NavigationPageState extends State<NavigationPage> {
         }
 
         if (state is AuthLogout) {
-          snackBar("Logout Success", Colors.red, Colors.white, context);
+          snackBar("Logout Success", Colors.green, Colors.white, context);
         }
       },
       builder: (context, state) {

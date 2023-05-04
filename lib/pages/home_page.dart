@@ -23,17 +23,11 @@ class _HomePageState extends State<HomePage> {
   late User? user;
   late List<Map<String, dynamic>> words;
   late Source audioUrl;
+  bool _isSignedIn = false;
 
   @override
   void initState() {
     super.initState();
-    final authState = context.read<AuthCubit>().state;
-
-    if (authState is AuthSuccess) {
-      final user = authState.user;
-
-      context.read<FirestoreCubit>().fetchData(user);
-    }
   }
 
   @override
@@ -99,6 +93,7 @@ class _HomePageState extends State<HomePage> {
                           _cubit.search(value);
                         }
                         FocusScope.of(context).unfocus();
+                        context.read<FirestoreCubit>().fetchData(user);
                       },
                     ),
                   ),
@@ -161,23 +156,40 @@ class _HomePageState extends State<HomePage> {
                                             BlocBuilder<FirestoreCubit,
                                                 FirestoreState>(
                                               builder: (context, state) {
+                                                _isSignedIn =
+                                                    authState is AuthSuccess;
+
                                                 return authState is AuthSuccess
                                                     ? state is FirestoreLoading
                                                         ? const CircularProgressIndicator()
-                                                        : state is FirestoreFetchSuccess &&
-                                                                state
-                                                                    .favoriteWords
-                                                                    .words
-                                                                    .any((w) =>
-                                                                        w.word ==
-                                                                        word)
-                                                            ? IconButton(
-                                                                icon: const Icon(
+                                                        : IconButton(
+                                                            icon: state is FirestoreFetchSuccess &&
+                                                                    state
+                                                                        .favoriteWords
+                                                                        .words
+                                                                        .any((w) =>
+                                                                            w.word ==
+                                                                            word)
+                                                                ? const Icon(
                                                                     Icons
-                                                                        .favorite),
-                                                                color:
-                                                                    Colors.red,
-                                                                onPressed: () {
+                                                                        .favorite,
+                                                                    color: Colors
+                                                                        .red)
+                                                                : const Icon(
+                                                                    Icons
+                                                                        .favorite_outline,
+                                                                    color: Colors
+                                                                        .red),
+                                                            onPressed: () {
+                                                              if (_isSignedIn) {
+                                                                if (state
+                                                                        is FirestoreFetchSuccess &&
+                                                                    state
+                                                                        .favoriteWords
+                                                                        .words
+                                                                        .any((w) =>
+                                                                            w.word ==
+                                                                            word)) {
                                                                   context
                                                                       .read<
                                                                           FirestoreCubit>()
@@ -185,15 +197,7 @@ class _HomePageState extends State<HomePage> {
                                                                           word,
                                                                           sourceUrls,
                                                                           user);
-                                                                },
-                                                              )
-                                                            : IconButton(
-                                                                icon: const Icon(
-                                                                    Icons
-                                                                        .favorite_outlined),
-                                                                color:
-                                                                    Colors.red,
-                                                                onPressed: () {
+                                                                } else {
                                                                   context
                                                                       .read<
                                                                           FirestoreCubit>()
@@ -201,8 +205,10 @@ class _HomePageState extends State<HomePage> {
                                                                           word,
                                                                           sourceUrls,
                                                                           user);
-                                                                },
-                                                              )
+                                                                }
+                                                              }
+                                                            },
+                                                          )
                                                     : const SizedBox.shrink();
                                               },
                                             ),
@@ -375,10 +381,10 @@ class _HomePageState extends State<HomePage> {
                             ),
                           );
                         } else if (state is StateError) {
-                          return Center(
+                          return const Center(
                             child: Text(
-                              'Error: ${state.message}',
-                              style: const TextStyle(color: Colors.red),
+                              'Please try another word',
+                              style: TextStyle(color: Colors.red),
                             ),
                           );
                         } else {
