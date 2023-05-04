@@ -1,7 +1,5 @@
-import 'package:dictionary_api/components/snackbar.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:equatable/equatable.dart';
 
@@ -24,47 +22,38 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   Future<void> registerWithEmailAndPassword(
-      String email, String password, context) async {
+      String email, String password) async {
     emit(AuthLoading());
     try {
       final user = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       emit(AuthSuccess(user.user!));
-      snackBar(
-          "Welcome ${user.user?.email}", Colors.green, Colors.white, context);
     } catch (error) {
-      emit(AuthFailed());
-      snackBar(error.toString(), Colors.red, Colors.white, context);
+      emit(AuthFailed(error.toString()));
     }
   }
 
-  Future<void> signIn(String email, String password, context) async {
+  Future<void> signIn(String email, String password) async {
     emit(AuthLoading());
     try {
       final user = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
       emit(AuthSuccess(user.user!));
-      snackBar(
-          "Welcome ${user.user?.email}", Colors.green, Colors.white, context);
     } on FirebaseAuthException catch (e) {
-      emit(AuthFailed());
-      snackBar(e.message.toString(), Colors.red, Colors.white, context);
+      emit(AuthFailed(e.message.toString()));
     } catch (error) {
-      emit(AuthFailed());
-      snackBar(error.toString(), Colors.red, Colors.white, context);
+      emit(AuthFailed(error.toString()));
     }
   }
 
-  Future<void> googleSignIn(context) async {
+  Future<void> googleSignIn() async {
     emit(AuthLoading());
 
     try {
       final googleAccount = await _googleSignIn.signIn();
 
       if (googleAccount == null) {
-        emit(AuthFailed());
-
-        snackBar("Please login again!", Colors.red, Colors.white, context);
+        emit(const AuthFailed("Please login again!"));
         return;
       }
 
@@ -75,19 +64,15 @@ class AuthCubit extends Cubit<AuthState> {
               idToken: googleAuth.idToken, accessToken: googleAuth.accessToken),
         );
         emit(AuthSuccess(authResult.user!));
-        snackBar("Welcome ${authResult.user?.displayName}", Colors.green,
-            Colors.white, context);
       }
     } on FirebaseAuthException catch (error) {
-      emit(AuthFailed());
-      snackBar(error.message.toString(), Colors.red, Colors.white, context);
+      emit(AuthFailed(error.message.toString()));
     } catch (error) {
-      emit(AuthFailed());
-      snackBar(error.toString(), Colors.red, Colors.white, context);
+      emit(AuthFailed(error.toString()));
     }
   }
 
-  Future<void> logOut(context) async {
+  Future<void> logOut() async {
     emit(AuthLoading());
     try {
       //Sign out firebase
@@ -95,15 +80,10 @@ class AuthCubit extends Cubit<AuthState> {
 
       //Revoke Google access token
       await _googleSignIn.signOut();
-      // await _googleSignIn.disconnect();
 
-      emit(AuthInitial());
-      snackBar("Successfully logout", Colors.green, Colors.white, context);
+      emit(AuthLogout());
     } catch (error) {
-      emit(AuthFailed());
-
-      print('error is: $error');
-      snackBar(error.toString(), Colors.red, Colors.white, context);
+      emit(AuthFailed(error.toString()));
     }
   }
 }

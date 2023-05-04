@@ -24,39 +24,51 @@ class DictionaryCubit extends Cubit<DictionaryState> {
       final response = await http.get(Uri.parse(_baseUrl.trim()));
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body)[0];
-        final List<Definition> definitions = [];
+        late Definition definitions;
 
-        print(data["meanings"]);
+        for (int i = 0; i < data.length; i++) {
+          // List for Phonetics
+          final List<Phonetics> phoneticsList = [];
+          for (int j = 0; j < data['phonetics'].length; j++) {
+            final phonetics = Phonetics(
+              text: data['phonetics'][j]['text'] ?? "",
+              audio: data['phonetics'][j]['audio'] ?? "",
+            );
+            phoneticsList.add(phonetics);
+          }
 
-        for (int i = 0; i < data['meanings'].length; i++) {
-          final meaning = data['meanings'][i];
+          final List<Meanings> meaningsList = [];
+          for (int k = 0; k < data['meanings'].length; k++) {
+            // List for Definitions
+            final List<Definitions> definitionsList = [];
+            for (int l = 0;
+                l < data['meanings'][k]['definitions'].length;
+                l++) {
+              final definitions = Definitions(
+                definition:
+                    data['meanings'][k]['definitions'][l]['definition'] ?? '',
+                example: data['meanings'][k]['definitions'][l]['example'] ?? '',
+              );
+              definitionsList.add(definitions);
+            }
+
+            final meanings = Meanings(
+              partOfSpeech: data['meanings'][k]['partOfSpeech'] ?? '',
+              definitions: definitionsList,
+              synonyms: data['meanings'][k]['synonyms'] ?? [],
+              antonyms: data['meanings'][k]['antonyms'] ?? [],
+            );
+            meaningsList.add(meanings);
+          }
+
           final definition = Definition(
-            word: data['word'],
-            type: meaning['partOfSpeech'] ?? '',
-            definition: meaning[definitions] != null &&
-                    i + 1 <= meaning[definitions].length
-                ? meaning['definitions'][0]['definition'] ?? ''
-                : "",
-            example: meaning[definitions] != null &&
-                    i + 1 <= meaning[definitions].length
-                ? meaning['definitions'][0]['example'] ?? ''
-                : "",
-            audio: data["phonetics"].length > 0 &&
-                    i + 1 <= data["phonetics"].length
-                ? data["phonetics"][i]["audio"] ?? ''
-                : "",
-            pronunciation: data["phonetics"].length > 0 &&
-                    i + 1 <= data["phonetics"].length
-                ? data["phonetics"][i]["text"] ?? ''
-                : "",
-            // pronunciation: data["phonetics"][0]["text"] ?? "",
-
-            // imageUrl: data['thumbnail'] ?? '',
-
-            synonyms: List<String>.from(meaning['synonyms'] ?? []),
-            antonyms: List<String>.from(meaning['antonyms'] ?? []),
+            word: data['word'] ?? '',
+            phonetics: phoneticsList,
+            meanings: meaningsList,
+            sourceUrls: data['sourceUrls'][0] ?? '',
           );
-          definitions.add(definition);
+
+          definitions = definition;
         }
 
         emit(StateLoaded(definitions));

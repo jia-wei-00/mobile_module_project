@@ -1,14 +1,11 @@
-import 'package:dictionary_api/cubit/api/api_cubit.dart';
+import 'package:dictionary_api/components/snackbar.dart';
+import 'package:dictionary_api/cubit/firestore/firestore_cubit.dart';
 import 'package:dictionary_api/pages/home_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:dictionary_api/components/navigation_bar.dart' as BottomBar;
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 import './cubit/auth/auth_cubit.dart';
 import './pages/favorite_page.dart';
@@ -20,7 +17,15 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+  runApp(
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => AuthCubit()),
+        BlocProvider(create: (context) => FirestoreCubit()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -67,84 +72,124 @@ class _NavigationPageState extends State<NavigationPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => AuthCubit(),
-      child: BlocConsumer<AuthCubit, AuthState>(
-        listener: (context, state) {
-          if (state is AuthInitial) {
-            setState(() {
-              _currentIndex = 0;
-            });
-          }
+    return BlocConsumer<AuthCubit, AuthState>(
+      listener: (context, state) {
+        if (state is AuthInitial) {
+          setState(() {
+            _currentIndex = 0;
+          });
+        }
 
-          if (state is AuthSuccess) {
-            setState(() {
-              _currentIndex = 0;
-            });
-          }
-        },
-        builder: (context, state) {
-          return Scaffold(
-            appBar: AppBar(
-              title: Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(_titles[_currentIndex]),
-                    state is AuthSuccess
-                        ? IconButton(
-                            icon: const Icon(Icons.logout),
-                            onPressed: () {
-                              context.read<AuthCubit>().logOut(context);
-                            },
-                          )
-                        : IconButton(
-                            icon: const Icon(Icons.login),
-                            onPressed: () => setState(() {
-                              _currentIndex = 2;
-                            }),
-                          )
-                  ],
-                ),
+        if (state is AuthSuccess) {
+          setState(() {
+            _currentIndex = 0;
+          });
+
+          snackBar("Welcome ${state.user!.displayName.toString()}",
+              Colors.green, Colors.white, context);
+        }
+
+        if (state is AuthFailed) {
+          snackBar(state.error, Colors.red, Colors.white, context);
+        }
+
+        if (state is AuthLogout) {
+          snackBar("Logout Success", Colors.red, Colors.white, context);
+        }
+      },
+      builder: (context, state) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(_titles[_currentIndex]),
+                  state is AuthSuccess
+                      ? InkWell(
+                          onTap: () {
+                            showDialog<String>(
+                              context: context,
+                              builder: (BuildContext context) => AlertDialog(
+                                title: const Text('Alert'),
+                                content: const Text('Do you want to logout?'),
+                                actions: <Widget>[
+                                  ElevatedButton(
+                                    onPressed: () =>
+                                        Navigator.pop(context, 'Cancel'),
+                                    child: const Text('Cancel'),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      context.read<AuthCubit>().logOut();
+                                      Navigator.pop(context, 'Cancel');
+                                    },
+                                    child: const Text('Logout'),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                          child: CircleAvatar(
+                            backgroundColor: Colors.white,
+                            child: Text(
+                              state.user!.email!.substring(0, 2).toUpperCase(),
+                              style: const TextStyle(color: Colors.black),
+                            ),
+                          ),
+                        )
+                      // IconButton(
+                      //     icon: const Icon(Icons.logout),
+                      //     onPressed: () {
+                      //       context.read<AuthCubit>().logOut();
+                      //     },
+                      //   )
+                      : IconButton(
+                          icon: const Icon(Icons.login),
+                          onPressed: () => setState(() {
+                            _currentIndex = 2;
+                          }),
+                        )
+                ],
               ),
-              automaticallyImplyLeading: false,
-              backgroundColor: Colors.black,
             ),
-            body: _pages[_currentIndex],
-            bottomNavigationBar: SalomonBottomBar(
-              currentIndex: _currentIndex,
-              onTap: (int index) {
-                setState(() {
-                  _currentIndex = index;
-                });
-              },
-              backgroundColor: Colors.black,
-              items: [
-                /// Home
-                SalomonBottomBarItem(
-                    icon: const Icon(Icons.home),
-                    title: const Text("Home"),
-                    selectedColor: Colors.white,
-                    unselectedColor: Colors.white),
+            automaticallyImplyLeading: false,
+            backgroundColor: Colors.black,
+          ),
+          body: _pages[_currentIndex],
+          bottomNavigationBar: SalomonBottomBar(
+            currentIndex: _currentIndex,
+            onTap: (int index) {
+              setState(() {
+                _currentIndex = index;
+              });
+            },
+            backgroundColor: Colors.black,
+            items: [
+              /// Home
+              SalomonBottomBarItem(
+                  icon: const Icon(Icons.home),
+                  title: const Text("Home"),
+                  selectedColor: Colors.white,
+                  unselectedColor: Colors.white),
 
-                /// Likes
-                SalomonBottomBarItem(
-                    icon: const Icon(Icons.favorite_border),
-                    title: const Text("Likes"),
-                    selectedColor: Colors.white,
-                    unselectedColor: Colors.white),
+              /// Likes
+              SalomonBottomBarItem(
+                  icon: const Icon(Icons.favorite_border),
+                  title: const Text("Likes"),
+                  selectedColor: Colors.white,
+                  unselectedColor: Colors.white),
 
-                /// Profile
-                // SalomonBottomBarItem(
-                //     icon: const Icon(Icons.person),
-                //     title: const Text("Profile"),
-                //     selectedColor: Colors.white,
-                //     unselectedColor: Colors.white),
-              ],
-            ),
-          );
-        },
-      ),
+              /// Profile
+              // SalomonBottomBarItem(
+              //     icon: const Icon(Icons.person),
+              //     title: const Text("Profile"),
+              //     selectedColor: Colors.white,
+              //     unselectedColor: Colors.white),
+            ],
+          ),
+        );
+      },
     );
   }
 }

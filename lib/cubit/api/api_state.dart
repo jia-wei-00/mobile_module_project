@@ -12,7 +12,7 @@ class StateInitial extends DictionaryState {}
 class StateLoading extends DictionaryState {}
 
 class StateLoaded extends DictionaryState {
-  final List<Definition> definitions;
+  final Definition definitions;
 
   StateLoaded(this.definitions);
 }
@@ -24,25 +24,33 @@ class StateError extends DictionaryState {
 }
 
 class Definition {
-  final String word;
-  final String type;
-  final String definition;
-  final String example;
-  final String audio;
-  final String pronunciation;
-  // final String imageUrl;
-  final List<String> synonyms;
-  final List<String> antonyms;
+  String? word;
+  List<Phonetics>? phonetics;
+  List<Meanings>? meanings;
+  String? sourceUrls;
 
-  Definition({
-    required this.word,
-    required this.type,
-    required this.definition,
-    required this.example,
-    required this.audio,
-    required this.pronunciation,
-    // required this.imageUrl,
-    required this.synonyms,
-    required this.antonyms,
-  });
+  Definition({this.word, this.phonetics, this.meanings, this.sourceUrls});
+}
+
+class Phonetics {
+  String? text;
+  String? audio;
+
+  Phonetics({this.text, this.audio});
+}
+
+class Meanings {
+  String? partOfSpeech;
+  List<Definitions>? definitions;
+  List<dynamic>? synonyms;
+  List<dynamic>? antonyms;
+
+  Meanings({this.partOfSpeech, this.definitions, this.synonyms, this.antonyms});
+}
+
+class Definitions {
+  String? definition;
+  String? example;
+
+  Definitions({this.definition, this.example});
 }

@@ -1,122 +1,64 @@
-import 'package:audioplayers/audioplayers.dart';
-import 'package:dictionary_api/components/snackbar.dart';
 import 'package:dictionary_api/cubit/api/api_cubit.dart';
 import 'package:dictionary_api/cubit/auth/auth_cubit.dart';
-import 'package:dictionary_api/cubit/firestore/firestore_cubit.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class DetailsPage extends StatefulWidget {
+  final String word;
+  const DetailsPage(this.word, {Key? key}) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<DetailsPage> createState() => _DetailsPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _DetailsPageState extends State<DetailsPage> {
   final DictionaryCubit _cubit = DictionaryCubit();
-  final _searchController = TextEditingController();
-  final AudioPlayer audioPlayer = AudioPlayer();
   late User? user;
-  late List<Map<String, dynamic>> words;
 
   @override
   void initState() {
     super.initState();
-    final authState = context.read<AuthCubit>().state;
-
-    if (authState is AuthSuccess) {
-      final user = authState.user;
-
-      context.read<FirestoreCubit>().fetchData(user);
-    }
-  }
-
-  @override
-  void dispose() {
-    _cubit.close();
-    _searchController.dispose();
-    audioPlayer.dispose();
-    super.dispose();
+    // Access the word variable using the widget property
+    final String word = widget.word;
+    // Use the word variable to perform an API call or other action
+    _cubit.search(word);
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => FirestoreCubit(),
-      child: Scaffold(
-        body: BlocListener<FirestoreCubit, FirestoreState>(
-          listener: (context, state) {
-            if (state is FirestoreError) {
-              snackBar(
-                state.errorMessage, // use the error message from state
-                Colors.red,
-                Colors.white,
-                context,
-              );
-            }
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.word),
+        backgroundColor: Colors.black,
+      ),
+      body: BlocProvider(
+        create: (context) => AuthCubit(),
+        child: BlocBuilder<AuthCubit, AuthState>(
+          builder: (context, authState) {
+            user = authState is AuthSuccess ? authState.user : null;
 
-            if (state is FirestoreSuccess) {
-              snackBar(
-                state.successMessage, // use the error message from state
-                Colors.green,
-                Colors.white,
-                context,
-              );
-            }
-          },
-          child: BlocBuilder<AuthCubit, AuthState>(
-            builder: (context, authState) {
-              user = authState is AuthSuccess ? authState.user : null;
+            return Column(
+              children: [
+                Expanded(
+                  child: BlocBuilder<DictionaryCubit, DictionaryState>(
+                    bloc: _cubit,
+                    builder: (BuildContext context, DictionaryState state) {
+                      if (state is StateInitial) {
+                        return const Center(
+                            child:
+                                Text('Enter a word to search for definitions'));
+                      } else if (state is StateLoading) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (state is StateLoaded) {
+                        return ListView.builder(
+                          itemCount: 1,
+                          itemBuilder: (BuildContext context, int index) {
+                            final word = state.definitions.word;
+                            final sourceUrls = state.definitions.sourceUrls;
 
-              return Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextField(
-                      controller: _searchController,
-                      decoration: InputDecoration(
-                        hintText: 'Enter a word',
-                        suffixIcon: IconButton(
-                          onPressed: () {
-                            final searchQuery = _searchController.text;
-                            if (searchQuery.isNotEmpty) {
-                              _cubit.search(searchQuery);
-                            }
-                            FocusScope.of(context).unfocus();
-                          },
-                          icon: const Icon(Icons.search),
-                          color: Colors.black,
-                        ),
-                      ),
-                      textInputAction: TextInputAction.search,
-                      onSubmitted: (value) {
-                        if (value.isNotEmpty) {
-                          _cubit.search(value);
-                        }
-                        FocusScope.of(context).unfocus();
-                      },
-                    ),
-                  ),
-                  Expanded(
-                    child: BlocBuilder<DictionaryCubit, DictionaryState>(
-                      bloc: _cubit,
-                      builder: (BuildContext context, DictionaryState state) {
-                        if (state is StateInitial) {
-                          return const Center(
-                              child: Text(
-                                  'Enter a word to search for definitions'));
-                        } else if (state is StateLoading) {
-                          return const Center(
-                              child: CircularProgressIndicator());
-                        } else if (state is StateLoaded) {
-                          final word = state.definitions.word;
-                          final sourceUrls = state.definitions.sourceUrls;
-
-                          return SingleChildScrollView(
-                            child: Card(
+                            return Card(
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Column(
@@ -143,54 +85,6 @@ class _HomePageState extends State<HomePage> {
                                                 },
                                                 icon: const Icon(
                                                     Icons.volume_up)),
-                                            BlocBuilder<FirestoreCubit,
-                                                FirestoreState>(
-                                              builder: (context, state) {
-                                                return authState is AuthSuccess
-                                                    ? state is FirestoreLoading
-                                                        ? const CircularProgressIndicator()
-                                                        : state is FirestoreFetchSuccess &&
-                                                                state
-                                                                    .favoriteWords
-                                                                    .words
-                                                                    .any((w) =>
-                                                                        w.word ==
-                                                                        word)
-                                                            ? IconButton(
-                                                                icon: const Icon(
-                                                                    Icons
-                                                                        .favorite),
-                                                                color:
-                                                                    Colors.red,
-                                                                onPressed: () {
-                                                                  context
-                                                                      .read<
-                                                                          FirestoreCubit>()
-                                                                      .removeFavorite(
-                                                                          word,
-                                                                          sourceUrls,
-                                                                          user);
-                                                                },
-                                                              )
-                                                            : IconButton(
-                                                                icon: const Icon(
-                                                                    Icons
-                                                                        .favorite_outlined),
-                                                                color:
-                                                                    Colors.red,
-                                                                onPressed: () {
-                                                                  context
-                                                                      .read<
-                                                                          FirestoreCubit>()
-                                                                      .addFavorite(
-                                                                          word,
-                                                                          sourceUrls,
-                                                                          user);
-                                                                },
-                                                              )
-                                                    : const SizedBox.shrink();
-                                              },
-                                            ),
                                           ],
                                         )
                                       ],
@@ -357,27 +251,27 @@ class _HomePageState extends State<HomePage> {
                                   ],
                                 ),
                               ),
-                            ),
-                          );
-                        } else if (state is StateError) {
-                          return Center(
-                            child: Text(
-                              'Error: ${state.message}',
-                              style: const TextStyle(color: Colors.red),
-                            ),
-                          );
-                        } else {
-                          return const Center(
-                            child: Text('Unknown state'),
-                          );
-                        }
-                      },
-                    ),
+                            );
+                          },
+                        );
+                      } else if (state is StateError) {
+                        return Center(
+                          child: Text(
+                            'Error: ${state.message}',
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                        );
+                      } else {
+                        return const Center(
+                          child: Text('Unknown state'),
+                        );
+                      }
+                    },
                   ),
-                ],
-              );
-            },
-          ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );

@@ -1,4 +1,6 @@
+import 'package:dictionary_api/cubit/api/api_cubit.dart';
 import 'package:dictionary_api/cubit/firestore/firestore_cubit.dart';
+import 'package:dictionary_api/pages/details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -19,21 +21,8 @@ class _FavoritePageState extends State<FavoritePage> {
       create: (context) => FirestoreCubit(),
       child: BlocBuilder<FirestoreCubit, FirestoreState>(
         builder: (context, state) {
-          return Scaffold(
-            body: const FavoriteCard(),
-            floatingActionButton:
-                BlocBuilder<AuthCubit, AuthState>(builder: (context, state) {
-              return state is AuthSuccess
-                  ? FloatingActionButton(
-                      onPressed: () {
-                        context.read<FirestoreCubit>().addFavorite("hello",
-                            "greeting to someone", context, state.user);
-                      },
-                      backgroundColor: Colors.black,
-                      child: const Icon(Icons.add),
-                    )
-                  : const SizedBox.shrink();
-            }),
+          return const Scaffold(
+            body: FavoriteCard(),
           );
         },
       ),
@@ -102,18 +91,16 @@ class _FavoriteCardState extends State<FavoriteCard> {
                         itemCount: state.favoriteWords.words.length,
                         itemBuilder: (context, index) {
                           final favorite = state.favoriteWords.words[index];
-                          final word = favorite['word'];
-                          final desc = favorite['description'];
-                          final createdAt = favorite['createdAt'];
+                          final word = favorite.word;
+                          final sourceUrls = favorite.sourceUrls;
 
-                          return Card(
+                          return InkWell(child: Card(
                             child: BlocBuilder<AuthCubit, AuthState>(
                               builder: (context, state) {
                                 return state is AuthSuccess
                                     ? ListTile(
                                         // leading: const Icon(Icons.album),
-                                        title: Text(word),
-                                        subtitle: Text(desc),
+                                        title: Text(word!),
                                         trailing: IconButton(
                                           icon: const Icon(
                                             Icons.delete_forever_rounded,
@@ -121,13 +108,20 @@ class _FavoriteCardState extends State<FavoriteCard> {
                                           ),
                                           onPressed: () => context
                                               .read<FirestoreCubit>()
-                                              .removeFavorite(word, desc,
-                                                  createdAt, state.user),
+                                              .removeFavorite(
+                                                  word, sourceUrls, state.user),
                                         ))
                                     : const SizedBox.shrink();
                               },
                             ),
-                          );
+                          ), onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => DetailsPage(word!),
+                              ),
+                            );
+                          });
                         },
                       );
                     } else {

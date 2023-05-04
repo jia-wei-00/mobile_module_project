@@ -46,6 +46,7 @@ dependencies:
   equatable: ^2.0.5
   cloud_firestore: ^4.5.3
   salomon_bottom_bar: ^3.3.2
+  audioplayers: ^4.0.1
 
 dev_dependencies:
   flutter_test:

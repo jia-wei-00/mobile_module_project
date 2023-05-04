@@ -33,7 +33,14 @@ class FirestoreFetchSuccess extends FirestoreState {
 }
 
 class FavoriteWords {
-  final List<Map<String, dynamic>> words;
+  final List<Word> words;
 
   const FavoriteWords(this.words);
+}
+
+class Word {
+  String? word;
+  String? sourceUrls;
+
+  Word({this.word, this.sourceUrls});
 }

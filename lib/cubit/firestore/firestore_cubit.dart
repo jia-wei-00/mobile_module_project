@@ -15,7 +15,7 @@ class FirestoreCubit extends Cubit<FirestoreState> {
 
   final db = FirebaseFirestore.instance;
 
-  Future<void> addFavorite(word, desc, context, user) async {
+  Future<void> addFavorite(word, sourceUrls, user) async {
     try {
       if (user == null) {
         emit(const FirestoreError("User not logged in"));
@@ -29,8 +29,7 @@ class FirestoreCubit extends Cubit<FirestoreState> {
 
       final favoriteWord = {
         'word': word,
-        'description': desc,
-        'createdAt': DateTime.now(),
+        'sourceUrls': sourceUrls,
       };
 
       if (doc.exists) {
@@ -49,11 +48,10 @@ class FirestoreCubit extends Cubit<FirestoreState> {
       fetchData(user);
     } catch (error) {
       emit(FirestoreError(error.toString()));
-      // snackBar(error.toString(), Colors.red, Colors.white, context);
     }
   }
 
-  Future<void> fetchData(user) async {
+  Future<void> fetchData(User? user) async {
     emit(FirestoreLoading());
 
     try {
@@ -67,11 +65,16 @@ class FirestoreCubit extends Cubit<FirestoreState> {
 
       if (docSnapshot.exists) {
         final data = docSnapshot.data() as Map<String, dynamic>;
-        final favoriteWords =
+        final favoriteWordsData =
             List<Map<String, dynamic>>.from(data['favoriteWords']);
+        final favoriteWords = favoriteWordsData
+            .map((wordData) => Word(
+                  word: wordData['word'],
+                  sourceUrls: wordData['sourceUrls'],
+                ))
+            .toList();
         emit(FirestoreFetchSuccess(FavoriteWords(favoriteWords)));
       } else {
-        // Document does not exist
         emit(const FirestoreError("Data not exist"));
       }
     } catch (error) {
@@ -79,7 +82,7 @@ class FirestoreCubit extends Cubit<FirestoreState> {
     }
   }
 
-  Future<void> removeFavorite(word, desc, createdAt, user) async {
+  Future<void> removeFavorite(word, sourceUrls, user) async {
     emit(FirestoreLoading());
 
     try {
@@ -92,8 +95,7 @@ class FirestoreCubit extends Cubit<FirestoreState> {
 
       final favoriteWord = {
         'word': word,
-        'description': desc,
-        'createdAt': createdAt,
+        'sourceUrls': sourceUrls,
       };
 
       await docRef.update({
