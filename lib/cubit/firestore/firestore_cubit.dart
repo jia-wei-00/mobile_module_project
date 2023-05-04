@@ -1,12 +1,7 @@
 import 'package:bloc/bloc.dart';
-import 'package:dictionary_api/cubit/auth/auth_cubit.dart';
 import 'package:equatable/equatable.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
-import '../../components/snackbar.dart';
 
 part './firestore_state.dart';
 

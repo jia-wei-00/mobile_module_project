@@ -1,4 +1,5 @@
 import 'package:audioplayers/audioplayers.dart';
+import 'package:dictionary_api/components/font.dart';
 import 'package:dictionary_api/components/snackbar.dart';
 import 'package:dictionary_api/cubit/api/api_cubit.dart';
 import 'package:dictionary_api/cubit/auth/auth_cubit.dart';
@@ -7,7 +8,6 @@ import 'package:dictionary_api/cubit/firestore/firestore_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:audioplayers/audioplayers.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -107,9 +107,10 @@ class _HomePageState extends State<HomePage> {
                       bloc: _cubit,
                       builder: (BuildContext context, DictionaryState state) {
                         if (state is StateInitial) {
-                          return const Center(
-                              child: Text(
-                                  'Enter a word to search for definitions'));
+                          return Center(
+                            child: mediumFont(
+                                'Enter a word to search for definitions'),
+                          );
                         } else if (state is StateLoading) {
                           return const Center(
                               child: CircularProgressIndicator());
@@ -137,22 +138,15 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                         Row(
                                           children: [
-                                            state.definitions.phonetics![0]
-                                                        .audio !=
-                                                    ""
+                                            state.definitions.phonetics!
+                                                        .isNotEmpty &&
+                                                    state
+                                                            .definitions
+                                                            .phonetics![0]
+                                                            .audio !=
+                                                        ""
                                                 ? IconButton(
                                                     onPressed: () async {
-                                                      // final player =
-                                                      //     AudioCache();
-                                                      // player.play(state
-                                                      //     .definitions
-                                                      //     .phonetics![0]
-                                                      //     .audio!);
-                                                      print(state
-                                                          .definitions
-                                                          .phonetics![0]
-                                                          .audio!);
-
                                                       audioUrl = UrlSource(state
                                                           .definitions
                                                           .phonetics![0]

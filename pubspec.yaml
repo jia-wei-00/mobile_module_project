@@ -38,6 +38,7 @@ dependencies:
   flutter_bloc: ^8.1.2
   firebase_core: ^2.10.0
   firebase_auth: ^4.4.2
+  flutter_native_splash: ^2.2.19
 
   flutterfire:
   google_fonts: ^4.0.4
@@ -47,6 +48,16 @@ dependencies:
   cloud_firestore: ^4.5.3
   salomon_bottom_bar: ^3.3.2
   audioplayers: ^4.0.1
+
+flutter_native_splash:
+  color: "#ffffff"
+  image: assets/images/logo1.png
+
+  android_12:
+    image: assets/images/logo1.png
+    icon_background_color: "#ffffff"
+
+  web: false
 
 dev_dependencies:
   flutter_test:

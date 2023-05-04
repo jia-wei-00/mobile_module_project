@@ -1,3 +1,4 @@
+import 'package:dictionary_api/components/font.dart';
 import 'package:dictionary_api/components/snackbar.dart';
 import 'package:dictionary_api/cubit/firestore/firestore_cubit.dart';
 import 'package:dictionary_api/pages/home_page.dart';
@@ -17,6 +18,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
   runApp(
     MultiBlocProvider(
       providers: [
@@ -104,27 +106,27 @@ class _NavigationPageState extends State<NavigationPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(_titles[_currentIndex]),
+                  bigFont(_titles[_currentIndex]),
                   state is AuthSuccess
                       ? InkWell(
                           onTap: () {
                             showDialog<String>(
                               context: context,
                               builder: (BuildContext context) => AlertDialog(
-                                title: const Text('Alert'),
-                                content: const Text('Do you want to logout?'),
+                                title: bigFont('Alert'),
+                                content: mediumFont('Do you want to logout?'),
                                 actions: <Widget>[
                                   ElevatedButton(
                                     onPressed: () =>
                                         Navigator.pop(context, 'Cancel'),
-                                    child: const Text('Cancel'),
+                                    child: mediumFont('Cancel'),
                                   ),
                                   ElevatedButton(
                                     onPressed: () {
                                       context.read<AuthCubit>().logOut();
                                       Navigator.pop(context, 'Cancel');
                                     },
-                                    child: const Text('Logout'),
+                                    child: mediumFont('Logout'),
                                   ),
                                 ],
                               ),
@@ -138,12 +140,6 @@ class _NavigationPageState extends State<NavigationPage> {
                             ),
                           ),
                         )
-                      // IconButton(
-                      //     icon: const Icon(Icons.logout),
-                      //     onPressed: () {
-                      //       context.read<AuthCubit>().logOut();
-                      //     },
-                      //   )
                       : IconButton(
                           icon: const Icon(Icons.login),
                           onPressed: () => setState(() {
@@ -179,13 +175,6 @@ class _NavigationPageState extends State<NavigationPage> {
                   title: const Text("Likes"),
                   selectedColor: Colors.white,
                   unselectedColor: Colors.white),
-
-              /// Profile
-              // SalomonBottomBarItem(
-              //     icon: const Icon(Icons.person),
-              //     title: const Text("Profile"),
-              //     selectedColor: Colors.white,
-              //     unselectedColor: Colors.white),
             ],
           ),
         );

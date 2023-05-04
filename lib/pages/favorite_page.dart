@@ -1,4 +1,4 @@
-import 'package:dictionary_api/cubit/api/api_cubit.dart';
+import 'package:dictionary_api/components/font.dart';
 import 'package:dictionary_api/cubit/firestore/firestore_cubit.dart';
 import 'package:dictionary_api/pages/details_page.dart';
 import 'package:flutter/material.dart';
@@ -100,11 +100,7 @@ class _FavoriteCardState extends State<FavoriteCard> {
                                 return state is AuthSuccess
                                     ? ListTile(
                                         leading: Text((index + 1).toString()),
-                                        title: Text(
-                                          word!,
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold),
-                                        ),
+                                        title: mediumFont(word!),
                                         trailing: IconButton(
                                           icon: const Icon(
                                             Icons.delete_forever_outlined,

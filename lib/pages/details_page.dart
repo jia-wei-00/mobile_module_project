@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:dictionary_api/cubit/api/api_cubit.dart';
 import 'package:dictionary_api/cubit/auth/auth_cubit.dart';
 
@@ -16,6 +17,8 @@ class DetailsPage extends StatefulWidget {
 class _DetailsPageState extends State<DetailsPage> {
   final DictionaryCubit _cubit = DictionaryCubit();
   late User? user;
+  final AudioPlayer audioPlayer = AudioPlayer();
+  late Source audioUrl;
 
   @override
   void initState() {
@@ -56,7 +59,6 @@ class _DetailsPageState extends State<DetailsPage> {
                           itemCount: 1,
                           itemBuilder: (BuildContext context, int index) {
                             final word = state.definitions.word;
-                            final sourceUrls = state.definitions.sourceUrls;
 
                             return Card(
                               child: Padding(
@@ -77,14 +79,25 @@ class _DetailsPageState extends State<DetailsPage> {
                                         ),
                                         Row(
                                           children: [
-                                            IconButton(
-                                                onPressed: () async {
-                                                  // await audioPlayer
-                                                  //     .play(UrlSource(
-                                                  //         audio));
-                                                },
-                                                icon: const Icon(
-                                                    Icons.volume_up)),
+                                            state.definitions.phonetics!
+                                                        .isNotEmpty &&
+                                                    state
+                                                            .definitions
+                                                            .phonetics![0]
+                                                            .audio !=
+                                                        ""
+                                                ? IconButton(
+                                                    onPressed: () async {
+                                                      audioUrl = UrlSource(state
+                                                          .definitions
+                                                          .phonetics![0]
+                                                          .audio!);
+                                                      await audioPlayer
+                                                          .play(audioUrl);
+                                                    },
+                                                    icon: const Icon(
+                                                        Icons.volume_up))
+                                                : const SizedBox.shrink(),
                                           ],
                                         )
                                       ],
