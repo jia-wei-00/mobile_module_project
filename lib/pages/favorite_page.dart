@@ -99,18 +99,23 @@ class _FavoriteCardState extends State<FavoriteCard> {
                               builder: (context, state) {
                                 return state is AuthSuccess
                                     ? ListTile(
-                                        // leading: const Icon(Icons.album),
-                                        title: Text(word!),
+                                        leading: Text((index + 1).toString()),
+                                        title: Text(
+                                          word!,
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
                                         trailing: IconButton(
                                           icon: const Icon(
-                                            Icons.delete_forever_rounded,
+                                            Icons.delete_forever_outlined,
                                             color: Colors.red,
                                           ),
                                           onPressed: () => context
                                               .read<FirestoreCubit>()
                                               .removeFavorite(
                                                   word, sourceUrls, state.user),
-                                        ))
+                                        ),
+                                      )
                                     : const SizedBox.shrink();
                               },
                             ),
