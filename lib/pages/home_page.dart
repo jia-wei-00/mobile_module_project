@@ -7,6 +7,7 @@ import 'package:dictionary_api/cubit/firestore/firestore_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -21,6 +22,7 @@ class _HomePageState extends State<HomePage> {
   final AudioPlayer audioPlayer = AudioPlayer();
   late User? user;
   late List<Map<String, dynamic>> words;
+  late Source audioUrl;
 
   @override
   void initState() {
@@ -135,14 +137,33 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                         Row(
                                           children: [
-                                            IconButton(
-                                                onPressed: () async {
-                                                  // await audioPlayer
-                                                  //     .play(UrlSource(
-                                                  //         audio));
-                                                },
-                                                icon: const Icon(
-                                                    Icons.volume_up)),
+                                            state.definitions.phonetics![0]
+                                                        .audio !=
+                                                    ""
+                                                ? IconButton(
+                                                    onPressed: () async {
+                                                      // final player =
+                                                      //     AudioCache();
+                                                      // player.play(state
+                                                      //     .definitions
+                                                      //     .phonetics![0]
+                                                      //     .audio!);
+                                                      print(state
+                                                          .definitions
+                                                          .phonetics![0]
+                                                          .audio!);
+
+                                                      audioUrl = UrlSource(state
+                                                          .definitions
+                                                          .phonetics![0]
+                                                          .audio!);
+                                                      await audioPlayer
+                                                          .play(audioUrl);
+                                                    },
+                                                    icon: const Icon(
+                                                        Icons.volume_up),
+                                                  )
+                                                : const SizedBox.shrink(),
                                             BlocBuilder<FirestoreCubit,
                                                 FirestoreState>(
                                               builder: (context, state) {
