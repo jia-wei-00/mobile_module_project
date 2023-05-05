@@ -1,16 +1,19 @@
-# dictionary_api
+# DICTIONARY APP
 
-A new Flutter project.
+A simple dictionary app je.
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter application.
+You can search any word inside the app to get definitions.
 
-A few resources to get you started if this is your first Flutter project:
+Features
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- Search Word
+- Add / Delete Favourite
+- Login / Logout Profile
+- Google Signin
+- Definitions
+- Pronunciation Audio
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Developed by [Jia Wei](https://github.com/jia-wei-00), [Farhah](https://github.com/FarhahNizam), [Ikmal](https://github.com/ikmalfadhil)
+You can contact [Ikmal](https://github.com/ikmalfadhil) if there is any problem or questions.
