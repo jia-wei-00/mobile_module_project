@@ -274,35 +274,51 @@ class _HomePageState extends State<HomePage> {
                                                           ),
                                                         )
                                                         .toList(),
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              8.0),
-                                                      child: mediumFont(
-                                                          "Example",
-                                                          italic: true),
-                                                    ),
-                                                    ...e.definitions!.map(
-                                                      (e) => Padding(
+                                                    if (e.definitions!
+                                                        .where((e) =>
+                                                            e.example != null &&
+                                                            e.example!
+                                                                .isNotEmpty)
+                                                        .isNotEmpty)
+                                                      Padding(
                                                         padding:
                                                             const EdgeInsets
-                                                                    .only(
-                                                                top: 5.0,
-                                                                bottom: 5.0),
-                                                        child: Row(
-                                                          children: [
-                                                            const Icon(Icons
-                                                                .arrow_right),
-                                                            const SizedBox(
-                                                                width: 5.0),
-                                                            Expanded(
-                                                                child: Text(e
-                                                                    .example!)),
-                                                          ],
-                                                        ),
+                                                                .all(8.0),
+                                                        child: mediumFont(
+                                                            "Example",
+                                                            italic: true),
                                                       ),
-                                                    ),
-                                                    if (e.synonyms!.isNotEmpty)
+                                                    ...e.definitions!
+                                                        .where((e) =>
+                                                            e.example != null &&
+                                                            e.example!
+                                                                .isNotEmpty)
+                                                        .map(
+                                                          (e) => Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    top: 5.0,
+                                                                    bottom:
+                                                                        5.0),
+                                                            child: Row(
+                                                              children: [
+                                                                const Icon(Icons
+                                                                    .arrow_right),
+                                                                const SizedBox(
+                                                                    width: 5.0),
+                                                                Expanded(
+                                                                    child: Text(
+                                                                        e.example!)),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                    if (e.synonyms!
+                                                        .where((e) =>
+                                                            e != null &&
+                                                            e.isNotEmpty)
+                                                        .isNotEmpty)
                                                       Padding(
                                                         padding:
                                                             const EdgeInsets
@@ -311,36 +327,45 @@ class _HomePageState extends State<HomePage> {
                                                             "synonyms",
                                                             italic: true),
                                                       ),
-                                                    Wrap(
-                                                      children: e.synonyms!
-                                                          .map(
-                                                              (item) => Padding(
-                                                                    padding:
-                                                                        const EdgeInsets.all(
-                                                                            4.0),
-                                                                    child:
-                                                                        Container(
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(4.0),
-                                                                        color: Colors
-                                                                            .grey[300],
-                                                                      ),
+                                                    if (e.synonyms!
+                                                        .where((e) =>
+                                                            e != null &&
+                                                            e.isNotEmpty)
+                                                        .isNotEmpty)
+                                                      Wrap(
+                                                        children: e.synonyms!
+                                                            .map(
+                                                                (item) =>
+                                                                    Padding(
                                                                       padding:
                                                                           const EdgeInsets.all(
-                                                                              8.0),
-                                                                      child: smallFont(
-                                                                          item,
-                                                                          italic:
-                                                                              true,
-                                                                          bold:
-                                                                              true),
-                                                                    ),
-                                                                  ))
-                                                          .toList(),
-                                                    ),
-                                                    if (e.antonyms!.isNotEmpty)
+                                                                              4.0),
+                                                                      child:
+                                                                          Container(
+                                                                        decoration:
+                                                                            BoxDecoration(
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(4.0),
+                                                                          color:
+                                                                              Colors.grey[300],
+                                                                        ),
+                                                                        padding:
+                                                                            const EdgeInsets.all(8.0),
+                                                                        child: smallFont(
+                                                                            item,
+                                                                            italic:
+                                                                                true,
+                                                                            bold:
+                                                                                true),
+                                                                      ),
+                                                                    ))
+                                                            .toList(),
+                                                      ),
+                                                    if (e.antonyms!
+                                                        .where((e) =>
+                                                            e != null &&
+                                                            e == "")
+                                                        .isNotEmpty)
                                                       Padding(
                                                         padding:
                                                             const EdgeInsets
@@ -349,7 +374,11 @@ class _HomePageState extends State<HomePage> {
                                                             "antonyms",
                                                             italic: true),
                                                       ),
-                                                    if (e.synonyms!.isNotEmpty)
+                                                    if (e.antonyms!
+                                                        .where((e) =>
+                                                            e != null &&
+                                                            e == "")
+                                                        .isNotEmpty)
                                                       Wrap(
                                                         children: e.antonyms!
                                                             .map(

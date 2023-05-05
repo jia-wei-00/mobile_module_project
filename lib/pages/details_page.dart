@@ -1,4 +1,5 @@
 import 'package:audioplayers/audioplayers.dart';
+import 'package:dictionary_api/components/font.dart';
 import 'package:dictionary_api/cubit/api/api_cubit.dart';
 import 'package:dictionary_api/cubit/auth/auth_cubit.dart';
 
@@ -55,124 +56,208 @@ class _DetailsPageState extends State<DetailsPage> {
                       } else if (state is StateLoading) {
                         return const Center(child: CircularProgressIndicator());
                       } else if (state is StateLoaded) {
-                        return ListView.builder(
-                          itemCount: 1,
-                          itemBuilder: (BuildContext context, int index) {
-                            final word = state.definitions.word;
+                        final word = state.definitions.word;
+                        final sourceUrls = state.definitions.sourceUrls;
 
-                            return Card(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          word!,
-                                          style: const TextStyle(
-                                            fontSize: 20.0,
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                        return SingleChildScrollView(
+                          child: Card(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        word!,
+                                        style: const TextStyle(
+                                          fontSize: 20.0,
+                                          fontWeight: FontWeight.bold,
                                         ),
-                                        Row(
-                                          children: [
-                                            state.definitions.phonetics!
-                                                        .isNotEmpty &&
-                                                    state
-                                                            .definitions
-                                                            .phonetics![0]
-                                                            .audio !=
-                                                        ""
-                                                ? IconButton(
-                                                    onPressed: () async {
-                                                      audioUrl = UrlSource(state
+                                      ),
+                                      Row(
+                                        children: [
+                                          state.definitions.phonetics!
+                                                      .isNotEmpty &&
+                                                  state
                                                           .definitions
                                                           .phonetics![0]
-                                                          .audio!);
-                                                      await audioPlayer
-                                                          .play(audioUrl);
-                                                    },
-                                                    icon: const Icon(
-                                                        Icons.volume_up))
-                                                : const SizedBox.shrink(),
-                                          ],
-                                        )
-                                      ],
+                                                          .audio !=
+                                                      ""
+                                              ? IconButton(
+                                                  onPressed: () async {
+                                                    audioUrl = UrlSource(state
+                                                        .definitions
+                                                        .phonetics![0]
+                                                        .audio!);
+                                                    await audioPlayer
+                                                        .play(audioUrl);
+                                                  },
+                                                  icon: const Icon(
+                                                      Icons.volume_up),
+                                                )
+                                              : const SizedBox.shrink(),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                  const SizedBox(height: 8.0),
+                                  if (state.definitions.phonetics != null)
+                                    Row(
+                                      children: state.definitions.phonetics!
+                                          .map((e) => Text(
+                                                e.text!,
+                                                textAlign: TextAlign.left,
+                                              ))
+                                          .toList(),
                                     ),
-                                    const SizedBox(height: 8.0),
-                                    if (state.definitions.phonetics != null)
-                                      Row(
-                                        children: state.definitions.phonetics!
-                                            .map((e) => Text(
-                                                  e.text!,
-                                                  textAlign: TextAlign.left,
-                                                ))
-                                            .toList(),
-                                      ),
-                                    if (state.definitions.phonetics != null)
-                                      Column(
-                                        children: state.definitions.meanings!
-                                            .map(
-                                              (e) => Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 8.0, bottom: 8.0),
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      e.partOfSpeech!,
-                                                      style: const TextStyle(
-                                                        fontSize: 14.0,
-                                                        fontStyle:
-                                                            FontStyle.italic,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                    ...e.definitions!
-                                                        .map(
-                                                          (e) => Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                        .only(
-                                                                    top: 5.0,
-                                                                    bottom:
-                                                                        5.0),
-                                                            child: Row(
-                                                              children: [
-                                                                const Icon(Icons
-                                                                    .arrow_right),
-                                                                const SizedBox(
-                                                                    width: 5.0),
-                                                                Expanded(
-                                                                    child: Text(
-                                                                        e.definition!)),
-                                                              ],
-                                                            ),
+                                  if (state.definitions.phonetics != null)
+                                    Column(
+                                      children: state.definitions.meanings!
+                                          .map(
+                                            (e) => Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 8.0, bottom: 8.0),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  mediumFont(e.partOfSpeech!,
+                                                      italic: true, bold: true),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: mediumFont(
+                                                        "Definitions",
+                                                        italic: true),
+                                                  ),
+                                                  ...e.definitions!
+                                                      .map(
+                                                        (e) => Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  top: 5.0,
+                                                                  bottom: 5.0),
+                                                          child: Row(
+                                                            children: [
+                                                              const Icon(Icons
+                                                                  .arrow_right),
+                                                              const SizedBox(
+                                                                  width: 5.0),
+                                                              Expanded(
+                                                                  child: Text(e
+                                                                      .definition!)),
+                                                            ],
                                                           ),
-                                                        )
-                                                        .toList(),
-                                                    if (e.synonyms!.isNotEmpty)
-                                                      const Padding(
-                                                        padding:
-                                                            EdgeInsets.all(8.0),
-                                                        child: Text(
-                                                          "synonyms",
-                                                          style: TextStyle(
-                                                            fontSize: 14.0,
-                                                            fontStyle: FontStyle
-                                                                .italic,
-                                                            fontWeight:
-                                                                FontWeight.bold,
+                                                        ),
+                                                      )
+                                                      .toList(),
+                                                  if (e.definitions!
+                                                      .where((e) =>
+                                                          e.example != null &&
+                                                          e.example!.isNotEmpty)
+                                                      .isNotEmpty)
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              8.0),
+                                                      child: mediumFont(
+                                                          "Example",
+                                                          italic: true),
+                                                    ),
+                                                  ...e.definitions!
+                                                      .where((e) =>
+                                                          e.example != null &&
+                                                          e.example!.isNotEmpty)
+                                                      .map(
+                                                        (e) => Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  top: 5.0,
+                                                                  bottom: 5.0),
+                                                          child: Row(
+                                                            children: [
+                                                              const Icon(Icons
+                                                                  .arrow_right),
+                                                              const SizedBox(
+                                                                  width: 5.0),
+                                                              Expanded(
+                                                                  child: Text(e
+                                                                      .example!)),
+                                                            ],
                                                           ),
                                                         ),
                                                       ),
+                                                  if (e.synonyms!
+                                                      .where((e) =>
+                                                          e != null &&
+                                                          e.isNotEmpty)
+                                                      .isNotEmpty)
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              8.0),
+                                                      child: mediumFont(
+                                                          "synonyms",
+                                                          italic: true),
+                                                    ),
+                                                  if (e.synonyms!
+                                                      .where((e) =>
+                                                          e != null &&
+                                                          e.isNotEmpty)
+                                                      .isNotEmpty)
                                                     Wrap(
                                                       children: e.synonyms!
+                                                          .map(
+                                                              (item) => Padding(
+                                                                    padding:
+                                                                        const EdgeInsets.all(
+                                                                            4.0),
+                                                                    child:
+                                                                        Container(
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(4.0),
+                                                                        color: Colors
+                                                                            .grey[300],
+                                                                      ),
+                                                                      padding:
+                                                                          const EdgeInsets.all(
+                                                                              8.0),
+                                                                      child: smallFont(
+                                                                          item,
+                                                                          italic:
+                                                                              true,
+                                                                          bold:
+                                                                              true),
+                                                                    ),
+                                                                  ))
+                                                          .toList(),
+                                                    ),
+                                                  if (e.antonyms!
+                                                      .where((e) =>
+                                                          e != null && e == "")
+                                                      .isNotEmpty)
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              8.0),
+                                                      child: mediumFont(
+                                                          "antonyms",
+                                                          italic: true),
+                                                    ),
+                                                  if (e.antonyms!
+                                                      .where((e) =>
+                                                          e != null && e == "")
+                                                      .isNotEmpty)
+                                                    Wrap(
+                                                      children: e.antonyms!
                                                           .map(
                                                               (item) => Padding(
                                                                     padding:
@@ -205,67 +290,16 @@ class _DetailsPageState extends State<DetailsPage> {
                                                                   ))
                                                           .toList(),
                                                     ),
-                                                    if (e.synonyms!.isNotEmpty)
-                                                      const Padding(
-                                                        padding:
-                                                            EdgeInsets.all(8.0),
-                                                        child: Text(
-                                                          "antonyms",
-                                                          style: TextStyle(
-                                                            fontSize: 14.0,
-                                                            fontStyle: FontStyle
-                                                                .italic,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    if (e.synonyms!.isNotEmpty)
-                                                      Wrap(
-                                                        children: e.antonyms!
-                                                            .map(
-                                                                (item) =>
-                                                                    Padding(
-                                                                      padding:
-                                                                          const EdgeInsets.all(
-                                                                              4.0),
-                                                                      child:
-                                                                          Container(
-                                                                        decoration:
-                                                                            BoxDecoration(
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(4.0),
-                                                                          color:
-                                                                              Colors.grey[300],
-                                                                        ),
-                                                                        padding:
-                                                                            const EdgeInsets.all(8.0),
-                                                                        child:
-                                                                            Text(
-                                                                          item,
-                                                                          style:
-                                                                              const TextStyle(
-                                                                            fontSize:
-                                                                                12.0,
-                                                                            fontWeight:
-                                                                                FontWeight.bold,
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                    ))
-                                                            .toList(),
-                                                      ),
-                                                  ],
-                                                ),
+                                                ],
                                               ),
-                                            )
-                                            .toList(),
-                                      )
-                                  ],
-                                ),
+                                            ),
+                                          )
+                                          .toList(),
+                                    )
+                                ],
                               ),
-                            );
-                          },
+                            ),
+                          ),
                         );
                       } else if (state is StateError) {
                         return Center(
