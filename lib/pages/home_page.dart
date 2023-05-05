@@ -240,15 +240,16 @@ class _HomePageState extends State<HomePage> {
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
-                                                    Text(
-                                                      e.partOfSpeech!,
-                                                      style: const TextStyle(
-                                                        fontSize: 14.0,
-                                                        fontStyle:
-                                                            FontStyle.italic,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
+                                                    mediumFont(e.partOfSpeech!,
+                                                        italic: true,
+                                                        bold: true),
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              8.0),
+                                                      child: mediumFont(
+                                                          "Definitions",
+                                                          italic: true),
                                                     ),
                                                     ...e.definitions!
                                                         .map(
@@ -273,20 +274,42 @@ class _HomePageState extends State<HomePage> {
                                                           ),
                                                         )
                                                         .toList(),
-                                                    if (e.synonyms!.isNotEmpty)
-                                                      const Padding(
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              8.0),
+                                                      child: mediumFont(
+                                                          "Example",
+                                                          italic: true),
+                                                    ),
+                                                    ...e.definitions!.map(
+                                                      (e) => Padding(
                                                         padding:
-                                                            EdgeInsets.all(8.0),
-                                                        child: Text(
-                                                          "synonyms",
-                                                          style: TextStyle(
-                                                            fontSize: 14.0,
-                                                            fontStyle: FontStyle
-                                                                .italic,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                          ),
+                                                            const EdgeInsets
+                                                                    .only(
+                                                                top: 5.0,
+                                                                bottom: 5.0),
+                                                        child: Row(
+                                                          children: [
+                                                            const Icon(Icons
+                                                                .arrow_right),
+                                                            const SizedBox(
+                                                                width: 5.0),
+                                                            Expanded(
+                                                                child: Text(e
+                                                                    .example!)),
+                                                          ],
                                                         ),
+                                                      ),
+                                                    ),
+                                                    if (e.synonyms!.isNotEmpty)
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                        child: mediumFont(
+                                                            "synonyms",
+                                                            italic: true),
                                                       ),
                                                     Wrap(
                                                       children: e.synonyms!
@@ -307,35 +330,24 @@ class _HomePageState extends State<HomePage> {
                                                                       padding:
                                                                           const EdgeInsets.all(
                                                                               8.0),
-                                                                      child:
-                                                                          Text(
-                                                                        item,
-                                                                        style:
-                                                                            const TextStyle(
-                                                                          fontSize:
-                                                                              12.0,
-                                                                          fontWeight:
-                                                                              FontWeight.bold,
-                                                                        ),
-                                                                      ),
+                                                                      child: smallFont(
+                                                                          item,
+                                                                          italic:
+                                                                              true,
+                                                                          bold:
+                                                                              true),
                                                                     ),
                                                                   ))
                                                           .toList(),
                                                     ),
-                                                    if (e.synonyms!.isNotEmpty)
-                                                      const Padding(
+                                                    if (e.antonyms!.isNotEmpty)
+                                                      Padding(
                                                         padding:
-                                                            EdgeInsets.all(8.0),
-                                                        child: Text(
-                                                          "antonyms",
-                                                          style: TextStyle(
-                                                            fontSize: 14.0,
-                                                            fontStyle: FontStyle
-                                                                .italic,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                          ),
-                                                        ),
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                        child: mediumFont(
+                                                            "antonyms",
+                                                            italic: true),
                                                       ),
                                                     if (e.synonyms!.isNotEmpty)
                                                       Wrap(
