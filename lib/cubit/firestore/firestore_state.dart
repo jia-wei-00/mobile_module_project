@@ -9,6 +9,12 @@ abstract class FirestoreState extends Equatable {
 
 class FirestoreInitial extends FirestoreState {}
 
+class FirestoreEmpty extends FirestoreState {
+  final String emptyMessage;
+
+  const FirestoreEmpty(this.emptyMessage);
+}
+
 class FirestoreLoading extends FirestoreState {}
 
 class FirestoreError extends FirestoreState {

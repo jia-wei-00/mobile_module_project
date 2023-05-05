@@ -79,10 +79,10 @@ class _FavoriteCardState extends State<FavoriteCard> {
                   builder: (context, state) {
                     if (state is FirestoreLoading) {
                       return const Center(child: CircularProgressIndicator());
-                    } else if (state is FirestoreError) {
+                    } else if (state is FirestoreEmpty) {
                       return Center(
                         child: Text(
-                          state.errorMessage,
+                          state.emptyMessage,
                           style: const TextStyle(color: Colors.red),
                         ),
                       );

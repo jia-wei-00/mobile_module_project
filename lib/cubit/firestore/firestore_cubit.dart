@@ -61,6 +61,12 @@ class FirestoreCubit extends Cubit<FirestoreState> {
 
         if (docSnapshot.exists) {
           final data = docSnapshot.data() as Map<String, dynamic>;
+
+          if (data['favoriteWords'].isEmpty) {
+            emit(const FirestoreEmpty("Empty data"));
+            return;
+          }
+
           final favoriteWordsData =
               List<Map<String, dynamic>>.from(data['favoriteWords']);
           final favoriteWords = favoriteWordsData
@@ -71,7 +77,7 @@ class FirestoreCubit extends Cubit<FirestoreState> {
               .toList();
           emit(FirestoreFetchSuccess(FavoriteWords(favoriteWords)));
         } else {
-          emit(const FirestoreError("Data not exist"));
+          emit(const FirestoreEmpty("Empty data"));
         }
       } catch (error) {
         emit(FirestoreError(error.toString()));
