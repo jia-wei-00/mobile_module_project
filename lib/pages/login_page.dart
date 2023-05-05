@@ -88,11 +88,14 @@ class _LoginPageState extends State<LoginPage> {
                                         'Don\'t have an account? Register')
                                     : const Text('Have an account? Sign In'),
                               ),
-                              SignInButton(
-                                Buttons.Google,
-                                onPressed: () {
-                                  context.read<AuthCubit>().googleSignIn();
-                                },
+                              Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: SignInButton(
+                                  Buttons.Google,
+                                  onPressed: () {
+                                    context.read<AuthCubit>().googleSignIn();
+                                  },
+                                ),
                               ),
                             ],
                           ),

@@ -46,7 +46,7 @@ class _FavoriteCardState extends State<FavoriteCard> {
     if (authState is AuthSuccess) {
       final user = authState.user;
 
-      context.read<FirestoreCubit>().fetchData(user);
+      context.read<FirestoreCubit>().fetchData(user, false);
     }
   }
 

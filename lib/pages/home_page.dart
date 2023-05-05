@@ -93,7 +93,7 @@ class _HomePageState extends State<HomePage> {
                           _cubit.search(value);
                         }
                         FocusScope.of(context).unfocus();
-                        context.read<FirestoreCubit>().fetchData(user);
+                        context.read<FirestoreCubit>().fetchData(user, true);
                       },
                     ),
                   ),

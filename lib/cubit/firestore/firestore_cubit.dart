@@ -40,40 +40,44 @@ class FirestoreCubit extends Cubit<FirestoreState> {
       // Emit a new state to indicate that the favorite word has been successfully added
       emit(const FirestoreSuccess("Favorite added successfully!"));
 
-      fetchData(user);
+      fetchData(user, false);
     } catch (error) {
       emit(FirestoreError(error.toString()));
     }
   }
 
-  Future<void> fetchData(User? user) async {
+  Future<void> fetchData(User? user, fromFetch) async {
     emit(FirestoreLoading());
 
-    try {
-      if (user == null) {
-        emit(const FirestoreError("User not logged in"));
-        return;
-      }
+    if (!fromFetch) {
+      try {
+        if (user == null) {
+          emit(const FirestoreError("User not logged in"));
+          return;
+        }
 
-      final docRef = db.collection("favorites").doc(user.uid);
-      final docSnapshot = await docRef.get();
+        final docRef = db.collection("favorites").doc(user!.uid);
+        final docSnapshot = await docRef.get();
 
-      if (docSnapshot.exists) {
-        final data = docSnapshot.data() as Map<String, dynamic>;
-        final favoriteWordsData =
-            List<Map<String, dynamic>>.from(data['favoriteWords']);
-        final favoriteWords = favoriteWordsData
-            .map((wordData) => Word(
-                  word: wordData['word'],
-                  sourceUrls: wordData['sourceUrls'],
-                ))
-            .toList();
-        emit(FirestoreFetchSuccess(FavoriteWords(favoriteWords)));
-      } else {
-        emit(const FirestoreError("Data not exist"));
+        if (docSnapshot.exists) {
+          final data = docSnapshot.data() as Map<String, dynamic>;
+          final favoriteWordsData =
+              List<Map<String, dynamic>>.from(data['favoriteWords']);
+          final favoriteWords = favoriteWordsData
+              .map((wordData) => Word(
+                    word: wordData['word'],
+                    sourceUrls: wordData['sourceUrls'],
+                  ))
+              .toList();
+          emit(FirestoreFetchSuccess(FavoriteWords(favoriteWords)));
+        } else {
+          emit(const FirestoreError("Data not exist"));
+        }
+      } catch (error) {
+        emit(FirestoreError(error.toString()));
       }
-    } catch (error) {
-      emit(FirestoreError(error.toString()));
+    } else {
+      emit(FirestoreInitial());
     }
   }
 
@@ -99,7 +103,7 @@ class FirestoreCubit extends Cubit<FirestoreState> {
 
       emit(const FirestoreSuccess("Successfully deleted"));
 
-      fetchData(user);
+      fetchData(user, false);
     } catch (error) {
       emit(FirestoreError(error.toString()));
     }

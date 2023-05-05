@@ -27,9 +27,6 @@ class FirestoreFetchSuccess extends FirestoreState {
   final FavoriteWords favoriteWords;
 
   const FirestoreFetchSuccess(this.favoriteWords);
-
-  // @override
-  // List<Object> get props => [favoriteWords];
 }
 
 class FavoriteWords {
